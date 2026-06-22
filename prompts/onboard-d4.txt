@@ -1,22 +1,24 @@
 Affiliate: {{name}}
-Kenh: {{channel}}
-Stage: D4 onboarding
+Kenh chinh: x
+Stage: D4 onboarding — Optimize hook
 
-Huong dan {{name}} thuc hanh chia se link lan dau tien tren kenh {{channel}}.
+Coaching {{name}} cach optimize X thread hook.
+Nguon tin hieu: Telegram (azaam/edric/alex).
+Yeu cau: hook manh trong 8-12 tu dau, hashtags #xauusd #gold #forex.
 
 Noi dung can co:
-1. Mo dau dong vien: "Hom nay la ngay thuc chien dau tien!" (1 cau)
-2. Script post mau san sang copy-paste cho {{channel}} (bai hoan chinh):
-   - TikTok: script noi 30 giay + caption + hashtag
-   - Telegram: tin hieu mau + link affiliate o cuoi
-   - Facebook: post 6-8 dong + anh goi y + hashtag
-   - X: tweet hook manh + link affiliate
-3. Cach chen link affiliate tu nhien, khong spam
-4. Gio tot de dang (peak hours cho {{channel}})
-5. Ket thuc: "Dang ngay hom nay nhe! Sau khi dang, reply link bai cho minh de minh check va gop y!"
+1. Hoi tham ket qua thread hom qua (nhe nhang, khong ap luc)
+2. Neu chua co engagement: goi y optimize hook
+   - Hook nen co: action word + number + urgency
+   - Vi du: "🔥 XAUUSD pha 3300 - Setup ngay bay gio"
+   - Tranh: "Phan tich XAUUSD hom nay"
+3. Neu co engagement: chuc mung + khuyen khich tang tan suat
+4. Meo tang engagement cho X threads (1 meo cu the):
+   - Reply comment trong 5 phut dau
+   - Quote tweet ket qua sau 2-4h
+5. Ket thuc: "Ngay mai minh se huong dan scale hon!"
 
 Yeu cau:
-- Script phai dung duoc luon, khong can chinh sua nhieu
-- Co link affiliate placeholder: [LINK_AFFILIATE_CUA_BAN]
-- Than thien, khich le
+- Cu the, actionable
+- So sanh hook tot vs hook yeu
 - Viet bang tieng Viet

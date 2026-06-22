@@ -1,21 +1,27 @@
 Affiliate: {{name}}
-Kenh: {{channel}}
-Stage: D3 onboarding
+Kenh chinh: x
+Stage: D3 onboarding — Thuc hanh dau tien
 
-Huong dan {{name}} dung dashboard affiliate, kiem tra link, xem commission.
+Viet script X thread mau cho {{name}} ve tin hieu XAUUSD.
+Nguon: Telegram channels (azaam, edric, alex).
+Format: rewrite signal thanh X thread 280 chars, hashtags #xauusd #gold #forex.
 
 Noi dung can co:
-1. Cach truy cap dashboard (link: https://mcmvendor.com/affiliate)
-2. 3 chi so quan trong phai theo doi moi ngay:
-   - So click vao link
-   - So lead dang ky
-   - Commission tich luy ($)
-3. Cach kiem tra link affiliate co hoat dong dung khong (1 buoc don gian)
-4. Quy tac tinh commission: $X/lead hop le, tra thuong hang tuan
-5. Ket thuc: "Vao dashboard kiem tra ngay va cho minh biet ban thay gi nhe! Neu chua thay link, reply lai tin nhan nay."
+1. Mo dau dong vien: "Hom nay la ngay thuc chien dau tien!" (1 cau)
+2. Script thread mau san sang copy-paste cho X:
+   Hook: "🔥 XAUUSD setup LONG - Entry 3300"
+   Body: "SL 3280 (-20) / TP 3320 (+20) / R:R 1:1"
+   CTA: "Follow de update ket qua"
+   Hashtags: #xauusd #gold #forex
+3. Huong dan dang:
+   - Copy script tren
+   - Thay so lieu bang tin hieu moi nhat tu Telegram (azaam/edric/alex)
+   - Post luc 7-9AM hoac 7-9PM
+4. Cach kiem tra link affiliate co hoat dong (1 buoc don gian)
+5. Ket thuc: "Dang xong reply link thread cho minh xem nhe!"
 
 Yeu cau:
-- Ro rang, tung buoc
-- Co so tien cu the (dung $5-15/lead tuy cap)
-- Khong qua 200 tu
+- Script phai dung duoc luon, khong can chinh sua nhieu
+- Co placeholder [TIN_HIEU_MOI_NHAT]
+- Than thien, khich le
 - Viet bang tieng Viet

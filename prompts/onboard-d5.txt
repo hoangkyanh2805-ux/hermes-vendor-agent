@@ -1,22 +1,24 @@
 Affiliate: {{name}}
-Kenh: {{channel}}
-Stage: D5 onboarding
+Kenh chinh: x
+Stage: D5 onboarding — Scale strategy
 
-Follow up sau khi {{name}} da chia se link lan dau. Coaching neu can.
+Coaching {{name}} cach scale X threads: retweet timing, quote tweet ket qua, reply strategy.
+Hashtags: #xauusd #gold #forex.
+Target: 10+ engagement/thread.
 
 Noi dung can co:
-1. Hoi tham ket qua bai dang hom qua (nhe nhang, khong ap luc)
-2. Neu chua co click/lead: goi y 1 dieu chinh nho cho kenh {{channel}}
-   - TikTok: thu doi hook dau tien
-   - Telegram: gui them 1 tin hieu free
-   - Facebook: boost bai bang cach tag ban be
-   - X: reply vao thread lon hon
-3. Neu co click: chuc mung + khuyen khich tang tan suat len 1 bai/ngay
-4. Meo tang conversion rate cho kenh {{channel}} (1 meo cu the)
-5. Ket thuc: "Ban dang lam tot lam! Ngay mai minh se huong dan cach scale len nhieu lead hon."
+1. Review tuan qua: {{name}} da post bao nhieu thread, engagement ra sao (1-2 cau)
+2. Chien luoc scale cu the cho X:
+   - Post 2 lan/ngay: 7-9AM + 7-9PM
+   - Rewrite 2 tin hieu khac nhau tu Telegram (azaam/edric/alex)
+   - Quote tweet thread cu khi co ket qua (TP hit hoac SL hit)
+3. Meo tang follower:
+   - Reply vao thread cua influencer lon (#xauusd #forex)
+   - Retweet + add comment cua minh
+4. Tracking: ghi lai engagement moi thread de biet hook nao tot
+5. Ket thuc: "Tuan nay thu dang 2 thread/ngay xem sao nhe!"
 
 Yeu cau:
-- Phan hoi cua nhieu truong hop (chua co ket qua / co ket qua)
-- Dong vien, khong phan xet
-- Ngan gon 100-150 tu
+- Cu the, so lieu ro rang
+- Khong qua tai, actionable
 - Viet bang tieng Viet

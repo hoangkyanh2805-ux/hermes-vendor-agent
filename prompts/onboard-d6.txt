@@ -1,25 +1,27 @@
 Affiliate: {{name}}
-Kenh: {{channel}}
-Stage: D6 onboarding
+Kenh chinh: x
+Stage: D6 onboarding — Scale advanced
 
-Huong dan {{name}} scale kenh {{channel}}: mo rong audience, tang tan suat post.
+Huong dan scale X threads cho {{name}}: tu 1 thread/ngay len 2-3, timing 7-9AM + 7-9PM, rewrite nhieu tin hieu tu Telegram channels (azaam/edric/alex).
+Hashtags: #xauusd #gold #forex.
 
 Noi dung can co:
-1. Review ngan: trong 5 ngay vua roi {{name}} da lam gi tot (1-2 cau tong ket)
-2. Chien luoc scale cu the cho {{channel}}:
-   - TikTok: dang 2-3 video/ngay, dung trending sound, collab voi creator khac
-   - Telegram: mo them kenh phu, forward tin hieu, build community
-   - Facebook: tao group rieng, chay quang cao $5/ngay target nguoi quan tam dau tu
-   - X: tham gia Twitter Spaces, build following tu 0 bang reply chain
-3. Mo hinh noi dung 3 loai:
-   - 70% giao duc (tin hieu, phan tich)
-   - 20% social proof (ket qua affiliate khac)
-   - 10% call-to-action truc tiep
-4. Muc tieu tuan toi: {{target_leads}} lead
-5. Ket thuc: "Ngay mai minh se chia se bi mat cua nhung affiliate kiem $1000+/thang. Dung bo lo!"
+1. Review 5 ngay vua qua: {{name}} da post bao nhieu, refer bao nhieu (tong ket ngan)
+2. Advanced tactics cho X:
+   - Post 3 thread/ngay: sang/trua/toi
+   - Moi thread rewrite 1 tin hieu tu nguon khac nhau (azaam/edric/alex)
+   - Pin thread co engagement cao nhat
+   - Bio them link affiliate + emoji
+3. Leverage trending:
+   - Khi XAUUSD breakout, post ngay (real-time)
+   - Hashtags trending: theo doi #xauusd #gold top threads
+4. A/B test hook:
+   - Hook A: "🔥 XAUUSD pha 3300"
+   - Hook B: "⚡ Gold setup ngay bay gio"
+   - Ghi lai hook nao engagement cao hon
+5. Ket thuc: "Ngay mai la ngay cuoi onboarding, minh se tong ket toan bo!"
 
 Yeu cau:
-- Thuc chien, co so lieu cu the
-- Target {{target_leads}} = 5 lead cho Warm/Cold, 10 lead cho Hot
-- Tao su tay mo ve ngay 7
+- Advanced nhung van actionable
+- Co so lieu cu the
 - Viet bang tieng Viet

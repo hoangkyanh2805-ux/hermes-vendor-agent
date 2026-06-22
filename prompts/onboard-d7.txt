@@ -1,31 +1,35 @@
 Affiliate: {{name}}
-Kenh: {{channel}}
-Stage: D7 onboarding — Mo hinh 21 kenh
+Kenh chinh: x
+Stage: D7 onboarding — Graduation
 
-Chia se mo hinh 21 kenh tu sach "$100M Leads" cua Alex Hormozi, ap dung vao XAUUSD affiliate.
+Ket thuc onboarding {{name}}. Chuc mung thanh Active affiliate!
+Strategy: X threads daily, rewrite signals tu Telegram (azaam/edric/alex), hashtags #xauusd #gold #forex.
+Target: {{target_leads}} leads tuan dau.
 
 Noi dung can co:
-1. Chuc mung hoan thanh 7 ngay dau — tom tat thanh tich (1-2 cau)
-2. Giai thich mo hinh 21 kenh don gian:
-   - 1 kenh chinh (la {{channel}} cua {{name}})
-   - 3 kenh phu chon tu: TikTok, Telegram, Facebook, X, YouTube Shorts, Zalo
-   - Moi noi dung tao 1 lan → tai su dung tren nhieu kenh
-3. Ke hoach 30 ngay tiep theo:
-   - Tuan 1: thong thanh {{channel}} (da lam)
-   - Tuan 2: them 1 kenh phu moi ngay
-   - Tuan 3: automation repost (Buffer, Make.com, hoac thu cong)
-   - Tuan 4: o 3+ kenh hoat dong, do kenh nao ra nhieu lead nhat
-4. Muc tieu thuc te:
-   - 3 kenh = co the 3x thu nhap affiliate
-   - Khong phai lam 3 lan — tao 1 bai, dang 3 noi
-5. Cung cap template lich dang tuan cho 2 kenh ({{channel}} + 1 kenh phu):
-   - Thu 2, 4, 6: {{channel}} (3 bai/tuan)
-   - Thu 3, 5: kenh phu (2 bai/tuan)
-6. Ket thuc: "Bon nguoi hoan thanh 7 ngay dau nhu ban thuong dat $500+ thang dau tien. Ban da san sang len tier tiep theo chua? Reply 'San sang' de minh gui cho ban ke hoach chi tiet!"
+1. Chuc mung hoan thanh onboarding 7 ngay! (1-2 cau warm)
+2. Recap 7 ngay:
+   - D1-D2: hoc workflow rewrite tin hieu
+   - D3-D4: thuc hanh + optimize hook
+   - D5-D6: scale 2-3 threads/ngay
+   - D7: tu day ban la Active affiliate!
+3. Roadmap 30 ngay tiep theo:
+   - Tuan 1: thong X (2-3 threads/ngay)
+   - Tuan 2: scale len 5 threads/ngay
+   - Tuan 3: thu Threads app (Meta) de mo rong
+   - Target: {{target_leads}} leads/tuan
+4. Resources:
+   - Telegram channels: azaam, edric, alex (nguon tin hieu)
+   - Hashtags: #xauusd #gold #forex
+   - Timing: 7-9AM, 12-2PM, 7-9PM
+5. Next steps:
+   - Daily checklist tu Agent 3 (7AM)
+   - Weekly report (9PM Friday)
+   - Neu can support, reply bat ky luc nao
+6. Ket thuc: "Chuc ban thanh cong! Bat dau kiếm tien ngay bay gio! 💪"
 
 Yeu cau:
-- Cam giac chien thang, ca ngo co can cu
-- Thiet thuc, khong ly thuyet
-- Tao urgency dang ky tier moi
+- Warm, celebrate
+- Recap ro rang
+- Forward-looking
 - Viet bang tieng Viet
-- 200-250 tu

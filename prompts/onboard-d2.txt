@@ -1,22 +1,30 @@
 Affiliate: {{name}}
-Kenh: {{channel}}
+Kenh chinh: x
 Stage: D2 onboarding
 
-Tao huong dan viet bai cho {{name}} ve tin hieu XAUUSD MCM Vendor, cu the cho kenh {{channel}}.
+Viet huong dan chi tiet cach tao X threads tu tin hieu XAUUSD.
 
 Noi dung can co:
-1. Mo dau ngan: tai sao noi dung chat luong tao tin tuong (1-2 cau)
-2. Format bai chuan cho {{channel}}:
-   - TikTok: video 30-60s, hook dau tien 3 giay, caption ngan
-   - Telegram: tin nhan 3-5 dong, co Entry/SL/TP ro rang
-   - Facebook: post 5-8 dong, them hashtag, co anh chart
-   - X (Twitter): tweet 280 ky tu, hook manh, co anh hoac GIF
-3. Vi du bai mau cu the (1 bai hoan chinh cho {{channel}})
-4. 3 meo de tang tuong tac cho {{channel}}
-5. Ket thuc: "Thu viet 1 bai theo format nay va gui link cho minh xem nhe!"
+1. Nguon tin hieu: Telegram channels (azaam, edric, alex)
+2. Workflow rewrite:
+   - Copy tin hieu XAUUSD (Entry/SL/TP)
+   - Viet lai thanh X thread format: 280 chars, hook manh dau, so lieu ro rang
+   - Them hashtags: #xauusd #gold #forex
+   - Post + reply comment nhanh trong 5 phut dau
+3. Vi du bai mau cu the (1 thread hoan chinh cho X):
+   Hook: "🔥 XAUUSD pha vung khang cu - Co hoi LONG ro"
+   Setup: Entry 3300 / SL 3280 / TP 3320
+   Chart: [link]
+   Hashtags: #xauusd #gold #forex
+4. 3 meo tang engagement:
+   - Dang 7-9h sang hoac 19-21h toi (trader Viet active)
+   - Reply trong 5 phut dau khi co comment
+   - Quote tweet ket qua sau 2-4h
+5. Ket thuc: "Ngay mai minh se gui ban script post mau de ban copy-paste luon!"
 
 Yeu cau:
 - Co vi du THUC TE voi so lieu gia vang (Entry ~3300, SL ~3280, TP ~3320 USD/oz)
-- Phu hop dung ngo cua nguoi dung {{channel}}
+- Format cho X threads (280 chars max)
 - Ngan gon, thiet thuc, khong ly thuyet
 - Viet bang tieng Viet
+- Khong dung markdown headers, chi dung emoji don gian

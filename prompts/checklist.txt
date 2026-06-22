@@ -6,7 +6,9 @@ Refer tuan nay: {{refer_this_week}} (tuan truoc: {{refer_last_week}})
 
 Tao checklist hom nay cho {{name}}.
 Toi da 3 viec. Moi viec 1 dong ngan gon.
-Cu the cho kenh {{channel}}.
-Neu kenh X: chi focus thread, target geo Canada/Italy/Germany/UAE/France/Saudi/UK/Poland.
+Platform: X threads ONLY (khong TikTok).
+Source tin hieu: Telegram channels (azaam, edric, alex).
+Hashtags: #xauusd #gold #forex.
+Task la: rewrite tin hieu thanh X thread format.
 KHONG chao hoi. KHONG giai thich dai.
 Format: 1. [viec] / 2. [viec] / 3. [viec]

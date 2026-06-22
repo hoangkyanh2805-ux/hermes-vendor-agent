@@ -1,8 +1,10 @@
-Affiliate: {{name}}, kenh: {{channel}}
+Affiliate: {{name}}, kenh: x
 Tuan nay: {{refer_this_week}} refer (tuan truoc: {{refer_last_week}})
 Lan cuoi post: {{days_since_post}} ngay truoc
 
 Viet 1 coaching message ngan, than thien.
+Strategy: rewrite tin hieu tu Telegram channels (azaam, edric, alex) thanh X threads.
+Hashtags: #xauusd #gold #forex.
 Chi ra van de cu the + de xuat 1 viec lam ngay hom nay.
 Toi da 3 cau.
 KHONG phan xet. KHONG ly thuyet.
