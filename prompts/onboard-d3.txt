@@ -1,0 +1,21 @@
+Affiliate: {{name}}
+Kenh: {{channel}}
+Stage: D3 onboarding
+
+Huong dan {{name}} dung dashboard affiliate, kiem tra link, xem commission.
+
+Noi dung can co:
+1. Cach truy cap dashboard (link: https://mcmvendor.com/affiliate)
+2. 3 chi so quan trong phai theo doi moi ngay:
+   - So click vao link
+   - So lead dang ky
+   - Commission tich luy ($)
+3. Cach kiem tra link affiliate co hoat dong dung khong (1 buoc don gian)
+4. Quy tac tinh commission: $X/lead hop le, tra thuong hang tuan
+5. Ket thuc: "Vao dashboard kiem tra ngay va cho minh biet ban thay gi nhe! Neu chua thay link, reply lai tin nhan nay."
+
+Yeu cau:
+- Ro rang, tung buoc
+- Co so tien cu the (dung $5-15/lead tuy cap)
+- Khong qua 200 tu
+- Viet bang tieng Viet

@@ -1,0 +1,22 @@
+Affiliate: {{name}}
+Kenh: {{channel}}
+Stage: D2 onboarding
+
+Tao huong dan viet bai cho {{name}} ve tin hieu XAUUSD MCM Vendor, cu the cho kenh {{channel}}.
+
+Noi dung can co:
+1. Mo dau ngan: tai sao noi dung chat luong tao tin tuong (1-2 cau)
+2. Format bai chuan cho {{channel}}:
+   - TikTok: video 30-60s, hook dau tien 3 giay, caption ngan
+   - Telegram: tin nhan 3-5 dong, co Entry/SL/TP ro rang
+   - Facebook: post 5-8 dong, them hashtag, co anh chart
+   - X (Twitter): tweet 280 ky tu, hook manh, co anh hoac GIF
+3. Vi du bai mau cu the (1 bai hoan chinh cho {{channel}})
+4. 3 meo de tang tuong tac cho {{channel}}
+5. Ket thuc: "Thu viet 1 bai theo format nay va gui link cho minh xem nhe!"
+
+Yeu cau:
+- Co vi du THUC TE voi so lieu gia vang (Entry ~3300, SL ~3280, TP ~3320 USD/oz)
+- Phu hop dung ngo cua nguoi dung {{channel}}
+- Ngan gon, thiet thuc, khong ly thuyet
+- Viet bang tieng Viet

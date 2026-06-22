@@ -1,0 +1,20 @@
+Affiliate: {{name}}
+Kenh: {{channel}}
+Stage: D1 onboarding
+
+Viet tin nhan chao mung ngay dau tien cho {{name}} vua tham gia chuong trinh affiliate MCM Vendor XAUUSD.
+
+Noi dung can co:
+1. Chao mung ngan gon, than thien (1-2 cau)
+2. Gioi thieu ngan MCM Vendor: tin hieu XAUUSD hang ngay, hoa hong affiliate
+3. 3 viec can lam ngay hom nay:
+   - Luu link affiliate ca nhan (se gui rieng)
+   - Theo doi kenh chinh: https://t.me/mcmvendor
+   - Chuan bi noi dung cho kenh {{channel}} cua ban
+4. Ket thuc: "Ngay mai minh se huong dan ban cach tao noi dung cho kenh {{channel}} nhe!"
+
+Yeu cau:
+- Ngan gon, than thien, co dong luc
+- Khong qua 150 tu
+- Viet bang tieng Viet
+- Khong dung markdown headers, chi dung emoji don gian

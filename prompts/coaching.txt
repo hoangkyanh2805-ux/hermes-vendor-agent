@@ -1,0 +1,8 @@
+Affiliate: {{name}}, kenh: {{channel}}
+Tuan nay: {{refer_this_week}} refer (tuan truoc: {{refer_last_week}})
+Lan cuoi post: {{days_since_post}} ngay truoc
+
+Viet 1 coaching message ngan, than thien.
+Chi ra van de cu the + de xuat 1 viec lam ngay hom nay.
+Toi da 3 cau.
+KHONG phan xet. KHONG ly thuyet.

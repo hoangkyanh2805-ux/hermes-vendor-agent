@@ -1,0 +1,15 @@
+[Unit]
+Description=MCM Vendor Agent 4 - CRM Sync
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/root/hermes-vendor-agent/scripts/run-agent4.sh
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=mcm-agent4
+
+[Install]
+WantedBy=multi-user.target

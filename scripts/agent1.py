@@ -66,7 +66,12 @@ def set_lead_state(username, data):
 
 def clear_lead_state(username):
     state = load_state()
-    state.pop(username, None)
+    if username in state:
+        chat_id = state[username].get("chat_id")
+        # Keep chat_id so Agent 2/3 can still find the user
+        state[username] = {"chat_id": chat_id, "stage": "done"} if chat_id else {}
+        if not chat_id:
+            state.pop(username, None)
     save_state(state)
 
 

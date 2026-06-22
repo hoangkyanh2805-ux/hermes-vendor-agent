@@ -1,0 +1,22 @@
+Affiliate: {{name}}
+Kenh: {{channel}}
+Stage: D5 onboarding
+
+Follow up sau khi {{name}} da chia se link lan dau. Coaching neu can.
+
+Noi dung can co:
+1. Hoi tham ket qua bai dang hom qua (nhe nhang, khong ap luc)
+2. Neu chua co click/lead: goi y 1 dieu chinh nho cho kenh {{channel}}
+   - TikTok: thu doi hook dau tien
+   - Telegram: gui them 1 tin hieu free
+   - Facebook: boost bai bang cach tag ban be
+   - X: reply vao thread lon hon
+3. Neu co click: chuc mung + khuyen khich tang tan suat len 1 bai/ngay
+4. Meo tang conversion rate cho kenh {{channel}} (1 meo cu the)
+5. Ket thuc: "Ban dang lam tot lam! Ngay mai minh se huong dan cach scale len nhieu lead hon."
+
+Yeu cau:
+- Phan hoi cua nhieu truong hop (chua co ket qua / co ket qua)
+- Dong vien, khong phan xet
+- Ngan gon 100-150 tu
+- Viet bang tieng Viet

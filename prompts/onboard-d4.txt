@@ -1,0 +1,22 @@
+Affiliate: {{name}}
+Kenh: {{channel}}
+Stage: D4 onboarding
+
+Huong dan {{name}} thuc hanh chia se link lan dau tien tren kenh {{channel}}.
+
+Noi dung can co:
+1. Mo dau dong vien: "Hom nay la ngay thuc chien dau tien!" (1 cau)
+2. Script post mau san sang copy-paste cho {{channel}} (bai hoan chinh):
+   - TikTok: script noi 30 giay + caption + hashtag
+   - Telegram: tin hieu mau + link affiliate o cuoi
+   - Facebook: post 6-8 dong + anh goi y + hashtag
+   - X: tweet hook manh + link affiliate
+3. Cach chen link affiliate tu nhien, khong spam
+4. Gio tot de dang (peak hours cho {{channel}})
+5. Ket thuc: "Dang ngay hom nay nhe! Sau khi dang, reply link bai cho minh de minh check va gop y!"
+
+Yeu cau:
+- Script phai dung duoc luon, khong can chinh sua nhieu
+- Co link affiliate placeholder: [LINK_AFFILIATE_CUA_BAN]
+- Than thien, khich le
+- Viet bang tieng Viet

@@ -1,0 +1,25 @@
+Affiliate: {{name}}
+Kenh: {{channel}}
+Stage: D6 onboarding
+
+Huong dan {{name}} scale kenh {{channel}}: mo rong audience, tang tan suat post.
+
+Noi dung can co:
+1. Review ngan: trong 5 ngay vua roi {{name}} da lam gi tot (1-2 cau tong ket)
+2. Chien luoc scale cu the cho {{channel}}:
+   - TikTok: dang 2-3 video/ngay, dung trending sound, collab voi creator khac
+   - Telegram: mo them kenh phu, forward tin hieu, build community
+   - Facebook: tao group rieng, chay quang cao $5/ngay target nguoi quan tam dau tu
+   - X: tham gia Twitter Spaces, build following tu 0 bang reply chain
+3. Mo hinh noi dung 3 loai:
+   - 70% giao duc (tin hieu, phan tich)
+   - 20% social proof (ket qua affiliate khac)
+   - 10% call-to-action truc tiep
+4. Muc tieu tuan toi: {{target_leads}} lead
+5. Ket thuc: "Ngay mai minh se chia se bi mat cua nhung affiliate kiem $1000+/thang. Dung bo lo!"
+
+Yeu cau:
+- Thuc chien, co so lieu cu the
+- Target {{target_leads}} = 5 lead cho Warm/Cold, 10 lead cho Hot
+- Tao su tay mo ve ngay 7
+- Viet bang tieng Viet

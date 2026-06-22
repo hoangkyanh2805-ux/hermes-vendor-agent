@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  espocrm-db:
+    image: mysql:8.0
+    container_name: mcm-espocrm-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-mcm_root_2026}
+      MYSQL_DATABASE: espocrm
+      MYSQL_USER: espocrm
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-mcm_espo_2026}
+    volumes:
+      - espocrm-db:/var/lib/mysql
+    networks:
+      - mcm-net
+
+  espocrm:
+    image: espocrm/espocrm:latest
+    container_name: mcm-espocrm
+    restart: unless-stopped
+    environment:
+      ESPOCRM_DATABASE_HOST: espocrm-db
+      ESPOCRM_DATABASE_NAME: espocrm
+      ESPOCRM_DATABASE_USER: espocrm
+      ESPOCRM_DATABASE_PASSWORD: ${MYSQL_PASSWORD:-mcm_espo_2026}
+      ESPOCRM_ADMIN_USERNAME: ${ESPO_USER:-admin}
+      ESPOCRM_ADMIN_PASSWORD: ${ESPO_PASS:-mcm_admin_2026}
+      ESPOCRM_SITE_URL: http://103.97.126.28:8080
+    volumes:
+      - espocrm-data:/var/www/html/data
+    ports:
+      - "8080:80"
+    depends_on:
+      - espocrm-db
+    networks:
+      - mcm-net
+
+volumes:
+  espocrm-db:
+  espocrm-data:
+
+networks:
+  mcm-net:
+    driver: bridge

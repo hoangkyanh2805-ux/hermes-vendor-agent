@@ -1,0 +1,6 @@
+=== Hom nay cua ban ===
+Refer: {{refer_today}} lead
+Earn: ~${{earn_today}}
+Rank: #{{rank}}/{{total_affiliates}}
+{{gap_msg}}
+Insight: {{insight}}

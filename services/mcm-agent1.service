@@ -1,0 +1,18 @@
+[Unit]
+Description=MCM Vendor Agent 1 - Capture & Qualify
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/root/hermes-vendor-agent
+EnvironmentFile=/root/.hermes/.env
+EnvironmentFile=-/root/hermes-vendor-agent/.env
+ExecStart=/usr/local/lib/hermes-agent/venv/bin/python scripts/agent1.py
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=mcm-agent1
+
+[Install]
+WantedBy=multi-user.target

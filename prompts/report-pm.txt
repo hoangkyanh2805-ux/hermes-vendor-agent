@@ -1,0 +1,5 @@
+=== MCM Summary {{date}} ===
+Tong lead hom nay: {{total_leads}}
+Affiliate active: {{active_count}}
+Top performer: @{{top_username}} ({{top_count}} lead)
+Can chu y: {{flagged_count}} nguoi 0 hoat dong 3+ ngay
