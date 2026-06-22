@@ -14,13 +14,17 @@ import base64
 
 # --- Config ---
 PORT = 3000
-BOT_TOKEN = os.environ["TELEGRAM_BOT_TOKEN"]
+# AFFILIATE_BOT_TOKEN = dedicated bot for affiliates (2-bot setup).
+# If not set, falls back to TELEGRAM_BOT_TOKEN (shared bot — Hermes routing issues apply).
+BOT_TOKEN = os.environ.get("AFFILIATE_BOT_TOKEN") or os.environ["TELEGRAM_BOT_TOKEN"]
+ADMIN_CHAT_ID = int(os.environ.get("ADMIN_CHAT_ID", "672890533"))
 SHEET_ID = os.environ["GOOGLE_SHEET_ID"]
 SA_FILE = os.environ.get("GOOGLE_SERVICE_ACCOUNT_FILE", "/root/.hermes/mcm-vendor-sa.json")
 ROUTER_KEY = os.environ["OPENAI_API_KEY"]
 ROUTER_URL = os.environ.get("OPENAI_BASE_URL", "http://127.0.0.1:20128/v1")
 MODEL = "kr/claude-sonnet-4.5"
 STATE_FILE = "/root/.hermes/agent1_state.json"
+FORM_LINK = os.environ.get("AFFILIATE_FORM_URL", "https://t.me/hiephoang47")
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 log = logging.getLogger("agent1")
@@ -292,24 +296,28 @@ def telegram_poll_loop():
                         tg_send(chat_id, "Minh ho tro /start va /help. Neu ban dang o flow qualify, hay tra loi cau hoi hien tai nhe.")
                     continue
 
-                if not state:
-                    tg_send(chat_id, BOT_INTRO)
-                    continue
-
-                stage = state.get("stage")
+                stage = state.get("stage") if state else None
 
                 if stage == "q1_sent":
-                    # Got Q1 answer, send Q2
                     set_lead_state(username, {**state, "stage": "q2_sent", "q1": text, "chat_id": chat_id})
-                    q2_text = get_prompt("Q2")
-                    tg_send(chat_id, q2_text)
+                    tg_send(chat_id, get_prompt("Q2"))
                     log.info(f"Q2 sent to {username}")
 
                 elif stage == "q2_sent":
-                    # Got Q2 answer, finalize
                     q1 = state.get("q1", "")
                     set_lead_state(username, {**state, "stage": "scoring"})
                     threading.Thread(target=finalize_lead, args=(username, q1, text), daemon=True).start()
+
+                else:
+                    # New visitor — save chat_id, send form link (never bot intro)
+                    if username:
+                        existing = get_lead_state(username) or {}
+                        set_lead_state(username, {**existing, "chat_id": chat_id, "stage": "new"})
+                    tg_send(chat_id,
+                        f"Chào bạn! 👋 Để tham gia affiliate MCM Vendor (XAUUSD signal), "
+                        f"vui lòng liên hệ admin: {FORM_LINK}\n\n"
+                        f"Hoặc điền form đăng ký để nhận link affiliate và hoa hồng ngay!")
+                    log.info(f"New visitor {username or chat_id} — saved chat_id, sent form link")
 
         except Exception as e:
             log.error(f"Poll error: {e}")
@@ -402,11 +410,15 @@ class WebhookHandler(BaseHTTPRequestHandler):
 
 
 if __name__ == "__main__":
-    # Telegram polling is handled by Hermes gateway (single poller).
-    # Lead replies are forwarded here via POST /webhook/telegram.
+    # 2-bot mode: if AFFILIATE_BOT_TOKEN is set, agent1 polls its own bot
+    # and does NOT rely on Hermes gateway for routing.
+    # Single-bot mode: Hermes gateway polls, forwards via POST /webhook/telegram.
+    if os.environ.get("AFFILIATE_BOT_TOKEN"):
+        log.info("2-bot mode: starting Telegram polling for affiliate bot")
+        threading.Thread(target=telegram_poll_loop, daemon=True).start()
+    else:
+        log.info("Single-bot mode: waiting for Hermes to forward replies via /webhook/telegram")
 
-    # Start webhook server
     server = HTTPServer(("0.0.0.0", PORT), WebhookHandler)
     log.info(f"Agent 1 webhook server listening on port {PORT}")
-    log.info(f"Endpoint: POST /webhook/capture")
     server.serve_forever()
