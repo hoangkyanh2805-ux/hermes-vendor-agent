@@ -239,7 +239,7 @@ def finalize_lead(username, q1, q2):
     # Write to Affiliate Master
     sheets_append("Affiliate Master", [
         lead_id, name, f"@{username}", source, channel,
-        score, path, "New", 0, now, "", 0, 0, 0, "", ""
+        score, path, "Onboarding", 0, now, "", 0, 0, 0, "", ""
     ])
 
     # Log activity

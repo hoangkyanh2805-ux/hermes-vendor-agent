@@ -93,10 +93,11 @@ def sheets_read():
 
 
 # --- System checks ---
-def check_service(name):
+def check_service(name, user=False):
     """Returns 'active', 'inactive', or 'unknown'."""
     try:
-        r = subprocess.run(["systemctl", "is-active", name], capture_output=True, text=True, timeout=5)
+        cmd = ["systemctl", "--user", "is-active", name] if user else ["systemctl", "is-active", name]
+        r = subprocess.run(cmd, capture_output=True, text=True, timeout=5)
         return r.stdout.strip()
     except Exception:
         return "unknown"
@@ -256,7 +257,7 @@ def build_daily_report():
     day_name = days_vn[local.weekday()]
     date_str = local.strftime("%d/%m/%Y")
 
-    hermes_ok = check_service("hermes-gateway") == "active"
+    hermes_ok = check_service("hermes-gateway", user=True) == "active"
     agent4_ok = check_http("http://localhost:3001/health")
     agent1_ok = check_http("http://localhost:3000/health")
     disk = get_disk_usage()
