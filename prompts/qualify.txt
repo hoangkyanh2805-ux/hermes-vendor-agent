@@ -1,0 +1,87 @@
+## Q1
+
+Chào {{name}}! Tôi là trợ lý AI của MCM Vendor 👋
+
+Để giúp bạn tốt nhất, cho tôi hỏi nhanh 2 câu nhé.
+
+**Câu 1:** Bạn đang có audience ở kênh nào?
+
+1️⃣ TikTok
+2️⃣ Telegram
+3️⃣ Facebook
+4️⃣ X (Twitter)
+5️⃣ Chưa có kênh nào
+
+Trả lời số hoặc tên kênh nhé!
+
+---
+
+## Q2
+
+Cảm ơn bạn! Câu cuối thôi 😊
+
+**Câu 2:** Mục tiêu thu nhập thụ động mỗi tháng của bạn là bao nhiêu?
+
+1️⃣ Dưới $500
+2️⃣ $500 - $2,000
+3️⃣ $2,000 - $5,000
+4️⃣ Trên $5,000
+
+---
+
+## SCORE_PROMPT
+
+Bạn là chuyên gia đánh giá affiliate cho chương trình MCM Vendor XAUUSD.
+
+Dựa trên 2 câu trả lời sau, hãy đánh giá affiliate này:
+
+Q1 (Kênh audience): {{q1_answer}}
+Q2 (Mục tiêu thu nhập): {{q2_answer}}
+
+Scoring rules:
+- Hot = có audience sẵn (TikTok/Telegram/Facebook/X) VÀ mục tiêu >= $2,000/tháng
+- Warm = có kênh nhưng nhỏ HOẶC mục tiêu $500-$2,000 HOẶC chỉ đáp ứng 1 điều kiện Hot
+- Cold = chưa có kênh VÀ mục tiêu < $500
+
+Channel mapping:
+- TikTok / 1 → tiktok
+- Telegram / 2 → telegram
+- Facebook / 3 → facebook
+- X / Twitter / 4 → x
+- Chưa có / 5 → none
+
+Path:
+- Hot → fast_track
+- Warm / Cold → nurture
+
+Trả lời CHÍNH XÁC theo format JSON:
+{"score": "Hot|Warm|Cold", "path": "fast_track|nurture", "channel": "tiktok|telegram|facebook|x|none"}
+
+---
+
+## WELCOME_FAST_TRACK
+
+🔥 Tuyệt vời {{name}}! Bạn có profile rất phù hợp.
+
+Tôi sẽ kết nối bạn với team ngay hôm nay để bắt đầu **Fast Track** — chương trình dành riêng cho affiliate có tiềm năng cao.
+
+Trong 24h tới bạn sẽ nhận được:
+✅ Link affiliate cá nhân
+✅ Bộ content XAUUSD ready-to-post
+✅ Hướng dẫn chi tiết theo kênh của bạn
+
+Chờ tin nhé! 🚀
+
+---
+
+## WELCOME_NURTURE
+
+Cảm ơn {{name}} đã quan tâm đến MCM Vendor! 😊
+
+Tôi đã ghi nhận thông tin của bạn. Trong 24h tới tôi sẽ gửi:
+
+📚 Bộ tài liệu giới thiệu MCM Vendor
+💡 Hướng dẫn bắt đầu từ con số 0
+📊 Case study affiliate thành công
+
+Hãy để ý inbox nhé! Nếu có câu hỏi gì cứ nhắn tôi 🙌

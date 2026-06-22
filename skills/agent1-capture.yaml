@@ -1,0 +1,112 @@
+name: agent1-capture
+version: "1.0.0"
+description: >
+  Capture affiliate leads from landing page webhook.
+  Sends 2 qualifying questions via Telegram, scores Hot/Warm/Cold,
+  writes to Google Sheet, sends welcome message, triggers Agent 2.
+
+trigger:
+  type: webhook
+  path: /webhook/capture
+  method: POST
+  sla_seconds: 30
+
+input:
+  fields:
+    - name: name
+      type: string
+      required: true
+    - name: telegram_username
+      type: string
+      required: true
+    - name: source
+      type: string
+      required: true
+      enum: [x_post, landing, telegram_cta, referral]
+    - name: timestamp
+      type: datetime
+      required: false
+
+steps:
+  - id: parse
+    action: parse_payload
+    output: [name, telegram_username, source, timestamp]
+
+  - id: send_q1
+    action: send_telegram
+    prompt_file: prompts/qualify.txt
+    prompt_key: Q1
+    target: "{{ telegram_username }}"
+    wait_reply: true
+    timeout: 86400  # 24h
+
+  - id: send_q2
+    action: send_telegram
+    prompt_file: prompts/qualify.txt
+    prompt_key: Q2
+    target: "{{ telegram_username }}"
+    wait_reply: true
+    timeout: 86400  # 24h
+
+  - id: score
+    action: llm_score
+    model: kr/claude-sonnet-4.5
+    prompt_file: prompts/qualify.txt
+    prompt_key: SCORE_PROMPT
+    inputs:
+      - q1_answer
+      - q2_answer
+    output:
+      score: Hot | Warm | Cold
+      path: fast_track | nurture
+      channel: tiktok | telegram | facebook | x | none
+
+  - id: write_sheet
+    action: google_sheets_append
+    sheet_id: "{{ env.GOOGLE_SHEET_ID }}"
+    tab: Affiliate Master
+    fields:
+      lead_id: "AFF-{{ date }}-{{ auto_increment }}"
+      name: "{{ name }}"
+      telegram_username: "{{ telegram_username }}"
+      source: "{{ source }}"
+      channel: "{{ score.channel }}"
+      score: "{{ score.score }}"
+      path: "{{ score.path }}"
+      status: New
+      onboard_day: 0
+      last_contact: "{{ now }}"
+
+  - id: log_activity
+    action: google_sheets_append
+    sheet_id: "{{ env.GOOGLE_SHEET_ID }}"
+    tab: Activity Log
+    fields:
+      affiliate_id: "{{ lead_id }}"
+      agent: Agent1
+      action: webhook_received
+      detail: "source={{ source }}, score={{ score.score }}"
+      timestamp: "{{ now }}"
+      success: true
+
+  - id: send_welcome
+    action: send_telegram
+    prompt_file: prompts/qualify.txt
+    prompt_key: "WELCOME_{{ score.path | upper }}"
+    target: "{{ telegram_username }}"
+
+  - id: trigger_agent2
+    action: trigger_skill
+    skill: agent2-onboard
+    payload:
+      telegram_username: "{{ telegram_username }}"
+      name: "{{ name }}"
+      channel: "{{ score.channel }}"
+      path: "{{ score.path }}"
+
+env_required:
+  - GOOGLE_SHEET_ID
+  - GOOGLE_SERVICE_ACCOUNT_FILE
+  - TELEGRAM_BOT_TOKEN
+  - OPENAI_API_KEY
+  - OPENAI_BASE_URL
