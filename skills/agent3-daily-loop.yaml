@@ -1,0 +1,41 @@
+name: agent3-daily-loop
+version: "1.0.0"
+description: >
+  Daily loop: 3 cron modes.
+  7AM = checklist for all Active/VIP affiliates.
+  2PM = conditional coaching (drop >30% or no post 3+ days).
+  9PM = rank + report to each affiliate + PM summary to Hiep.
+
+trigger:
+  type: cron
+  schedules:
+    checklist: "0 0 * * *"   # 7AM UTC+7
+    coaching:  "0 7 * * *"   # 2PM UTC+7
+    report:    "0 14 * * *"  # 9PM UTC+7
+
+modes:
+  checklist:
+    prompt_file: prompts/checklist.txt
+    filter_status: [Active, VIP, Onboarding]
+
+  coaching:
+    prompt_file: prompts/coaching.txt
+    condition:
+      any:
+        - "refer_this_week < refer_last_week * 0.7"
+        - "days_since_last_post > 3"
+
+  report:
+    affiliate_prompt: prompts/report-affiliate.txt
+    pm_prompt: prompts/report-pm.txt
+    pm_chat_id: "{{ env.ADMIN_CHAT_ID }}"
+    rank_by: refer_this_week
+    update_sheet: true
+
+env_required:
+  - GOOGLE_SHEET_ID
+  - GOOGLE_SERVICE_ACCOUNT_FILE
+  - TELEGRAM_BOT_TOKEN
+  - OPENAI_API_KEY
+  - OPENAI_BASE_URL
+  - ADMIN_CHAT_ID

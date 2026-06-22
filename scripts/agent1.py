@@ -200,7 +200,11 @@ def gen_lead_id():
 # --- Complete lead flow (runs in background thread) ---
 def process_lead(lead):
     username = lead["telegram_username"].lstrip("@")
-    chat_id = lead.get("chat_id") or lead["telegram_username"]
+    # chat_id: payload > pre-stored by Hermes (user messaged bot first) > fallback @username string
+    existing = get_lead_state(username)
+    chat_id = (lead.get("chat_id") or
+               (existing.get("chat_id") if existing else None) or
+               lead["telegram_username"])
     name = lead["name"]
 
     log.info(f"Processing lead: {username}")

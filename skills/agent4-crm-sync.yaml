@@ -1,0 +1,59 @@
+name: agent4-crm-sync
+version: "1.0.0"
+description: >
+  EspoCRM webhook receiver on port 3001.
+  Listens 24/7 for 4 events: Lead.create, Opportunity.create,
+  Contact.fieldUpdate.cStatus, Contact.fieldUpdate.cTotalEarn.
+  Syncs EspoCRM data back to Google Sheet.
+
+trigger:
+  type: webhook
+  port: 3001
+  endpoints:
+    - path: /webhook/espo/lead-create
+      event: Lead.create
+    - path: /webhook/espo/status-change
+      event: Contact.fieldUpdate.cStatus
+    - path: /webhook/espo/opportunity
+      event: Opportunity.create
+    - path: /webhook/espo/commission
+      event: Contact.fieldUpdate.cTotalEarn
+    - path: /health
+      type: health_check
+
+payload_handling:
+  unwrap_list: true  # EspoCRM sends [{...}] not {...}
+  custom_field_prefix: "c"  # cTelegramUsername, cChannel, cScore, cStatus, cTotalEarn
+
+events:
+  lead_create:
+    check_duplicate: true
+    action: google_sheets_append
+    tab: Affiliate Master
+    notify_admin: true
+
+  status_change:
+    new_to_active:
+      action: send_tracking_link
+      template: "Link affiliate cua ban: {{ AFFILIATE_BASE_URL }}/{{ username }}"
+    active_to_vip:
+      action: trigger_skill
+      skill: agent2-onboard
+      days: [6, 7]
+
+  opportunity_create:
+    action: update_commission
+    fields: [refer_this_week, total_earn, rank]
+
+  commission_update:
+    action: google_sheets_update
+    field: total_earn
+
+env_required:
+  - GOOGLE_SHEET_ID
+  - GOOGLE_SERVICE_ACCOUNT_FILE
+  - TELEGRAM_BOT_TOKEN
+  - ESPOCRM_URL
+  - ESPOCRM_API_KEY
+  - ADMIN_CHAT_ID
+  - AFFILIATE_BASE_URL

@@ -1,0 +1,50 @@
+name: agent2-onboard
+version: "1.0.0"
+description: >
+  7-day onboarding sequence for new affiliates.
+  Triggered by cron at 8AM daily. Sends D1-D7 content
+  tailored to affiliate's channel. Promotes to Active after D3.
+
+trigger:
+  type: cron
+  schedule: "0 1 * * *"  # 8AM UTC+7
+
+steps:
+  - id: read_sheet
+    action: google_sheets_read
+    tab: Affiliate Master
+    filter:
+      status: [New, Onboarding]
+      onboard_day: "<7"
+
+  - id: for_each_affiliate
+    action: iterate
+    over: read_sheet.rows
+    do:
+      - id: load_prompt
+        action: render_template
+        file: "prompts/onboard-d{{ onboard_day + 1 }}.txt"
+        vars:
+          name: "{{ row.name }}"
+          channel: "{{ row.channel }}"
+          target_leads: "{{ 10 if row.score == 'Hot' else 5 }}"
+
+      - id: send_telegram
+        action: send_telegram
+        chat_id: "{{ lookup_chat_id(row.telegram_username) }}"
+        text: "{{ load_prompt.content }}"
+
+      - id: update_sheet
+        action: google_sheets_update
+        row_id: "{{ row.lead_id }}"
+        fields:
+          onboard_day: "{{ row.onboard_day + 1 }}"
+          last_contact: "{{ now }}"
+          status: "{{ 'Active' if row.onboard_day + 1 >= 3 else 'Onboarding' }}"
+
+env_required:
+  - GOOGLE_SHEET_ID
+  - GOOGLE_SERVICE_ACCOUNT_FILE
+  - TELEGRAM_BOT_TOKEN
+  - OPENAI_API_KEY
+  - OPENAI_BASE_URL

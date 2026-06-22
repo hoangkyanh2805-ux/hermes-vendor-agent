@@ -1,0 +1,64 @@
+name: agent5-monitor
+version: "1.0.0"
+description: >
+  Project monitor: daily 8PM report + Friday 9PM weekly summary.
+  Checks all services, crons, Sheet stats, git commits.
+  Sends structured report to Hiep via Telegram.
+
+trigger:
+  type: cron
+  schedules:
+    daily:  "0 13 * * *"    # 8PM UTC+7
+    weekly: "0 14 * * 5"    # 9PM Friday UTC+7
+
+checks:
+  services:
+    - mcm-agent1.service
+    - mcm-agent4.service
+    - hermes-gateway.service (user)
+    - docker/mcm-espocrm
+    - docker/mcm-espocrm-db
+
+  endpoints:
+    - http://localhost:3000/health
+    - http://localhost:3001/health
+    - http://localhost:8080
+
+  files:
+    - /root/hermes-vendor-agent/scripts/agent1.py
+    - /root/hermes-vendor-agent/scripts/agent2.py
+    - /root/hermes-vendor-agent/scripts/agent3.py
+    - /root/hermes-vendor-agent/scripts/agent4.py
+    - /root/hermes-vendor-agent/scripts/agent5.py
+    - /root/.hermes/mcm-vendor-sa.json
+    - /root/.hermes/agent1_state.json
+
+  crons:
+    - "0 1 * * *"   # agent2
+    - "0 0 * * *"   # agent3 checklist
+    - "0 7 * * *"   # agent3 coaching
+    - "0 14 * * *"  # agent3 report
+    - "0 13 * * *"  # agent5 daily
+    - "* * * * *"   # espocrm cron.php
+
+report_format: |
+  ━━━━━━━━━━━━━━━━━━━━━━
+  MCM BUILD — {weekday} {date}
+  ━━━━━━━━━━━━━━━━━━━━━━
+  Agent 1 (Capture):    {status}
+  Agent 2 (Onboard):    {status}
+  Agent 3 (Daily Loop): {status}
+  Agent 4 (CRM Sync):   {status}
+  Agent 5 (Monitor):    {status}
+
+  Sheet: {total_rows} affiliates | Active: {active_count}
+  Commits today: {commit_count}
+  Vấn đề: {issues}
+  Bước tiếp theo: {next_step}
+  ━━━━━━━━━━━━━━━━━━━━━━
+
+env_required:
+  - TELEGRAM_BOT_TOKEN
+  - ADMIN_CHAT_ID
+  - GOOGLE_SHEET_ID
+  - GOOGLE_SERVICE_ACCOUNT_FILE
