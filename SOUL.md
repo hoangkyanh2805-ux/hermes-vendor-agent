@@ -44,10 +44,25 @@ Landing page POST /webhook/capture
 - Health: `curl http://localhost:3000/health`
 - Public endpoint: `http://103.97.126.28:3000/webhook/capture`
 
-### B. Hermes Gateway DM - admin chat
+### B. Hermes Gateway - POLLER DUY NHAT + admin chat
 
-Bot Telegram admin chat_id `672890533` (`@hiephoang47`).
-Hermes gateway chay bang `hermes-gateway.service`, dung cho admin debug, test, cron reports, va lenh thu cong.
+Hermes la poller duy nhat cua bot. agent1.py khong chay getUpdates.
+
+**Quy tac xu ly message Telegram den:**
+
+Khi nhan duoc message Telegram tu bat ky ai (tru admin 672890533):
+1. Doc `/root/.hermes/agent1_state.json`
+2. Neu username nguoi gui co trong state.json (ho dang o buoc Q1 hoac Q2):
+   - Goi ngay: `curl -s -X POST http://localhost:3000/webhook/telegram -H "Content-Type: application/json" -d '{"username":"<username>","text":"<text>","chat_id":<chat_id>}'`
+   - KHONG gui LLM response, KHONG reply bat ky gi. agent1.py se tu xu ly va reply.
+3. Neu username KHONG co trong state.json va KHONG phai admin:
+   - Reply ngan: "Chao ban! De dang ky affiliate MCM Vendor, vui long dien form tai [link]."
+4. Neu la admin (chat_id 672890533): xu ly binh thuong nhu AI assistant.
+
+**Kiem tra state nhanh:**
+```bash
+cat /root/.hermes/agent1_state.json
+```
 
 ## Quy tac vang
 

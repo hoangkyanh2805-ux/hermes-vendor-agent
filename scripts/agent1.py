@@ -1,7 +1,7 @@
 """
-Agent 1 — Capture Agent
+Agent 1 - Capture Agent
 Webhook server: POST /webhook/capture
-Flow: receive lead → Q1 → Q2 → score → write sheet → welcome → trigger agent2
+Flow: receive lead -> Q1 -> Q2 -> score -> write sheet -> welcome -> trigger agent2
 """
 
 import os, json, time, threading, logging, urllib.request, urllib.parse
@@ -24,6 +24,27 @@ STATE_FILE = "/root/.hermes/agent1_state.json"
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 log = logging.getLogger("agent1")
+
+
+BOT_INTRO = """MCM Vendor Bot online.
+
+Minh ho tro affiliate qua Telegram:
+- Nhan lead tu form va hoi 2 cau qualify
+- Cham Hot/Warm/Cold bang 9Router
+- Ghi lead vao Google Sheet
+- Gui lo trinh Fast Track hoac Nurture
+- Sau do Agent 2/3/4/5 se onboarding, checklist, report, CRM sync va monitor
+
+Neu ban muon bat dau lai phan qualify, hay gui form lead hoac tra loi khi bot dang hoi Q1/Q2."""
+
+
+def get_state_question(state, name):
+    stage = state.get("stage")
+    if stage == "q1_sent":
+        return get_prompt("Q1", name=name)
+    if stage == "q2_sent":
+        return get_prompt("Q2")
+    return BOT_INTRO
 
 
 # --- State management ---
@@ -246,11 +267,24 @@ def telegram_poll_loop():
                 chat_id = msg["chat"]["id"]
                 text = msg.get("text", "").strip()
 
-                if not username or not text or text.startswith("/"):
+                if not text:
                     continue
 
-                state = get_lead_state(username)
+                state = get_lead_state(username) if username else None
+                name = user.get("first_name") or user.get("last_name") or username or "bạn"
+
+                if text.startswith("/"):
+                    command = text.split()[0].lower()
+                    if command in ("/start", "/help"):
+                        tg_send(chat_id, get_state_question(state, name) if state else BOT_INTRO)
+                    elif command == "/sethome":
+                        tg_send(chat_id, "Agent 1 da nhan /sethome. Neu Hermes Gateway dang chay, gateway se luu home channel cho cron/report.")
+                    else:
+                        tg_send(chat_id, "Minh ho tro /start va /help. Neu ban dang o flow qualify, hay tra loi cau hoi hien tai nhe.")
+                    continue
+
                 if not state:
+                    tg_send(chat_id, BOT_INTRO)
                     continue
 
                 stage = state.get("stage")
@@ -290,17 +324,51 @@ class WebhookHandler(BaseHTTPRequestHandler):
             self.end_headers()
 
     def do_POST(self):
-        if self.path != "/webhook/capture":
-            self.send_response(404)
-            self.end_headers()
-            return
-
         length = int(self.headers.get("Content-Length", 0))
         body = self.rfile.read(length)
         try:
             payload = json.loads(body)
         except Exception:
             self.send_response(400)
+            self.end_headers()
+            return
+
+        # Hermes forwards Telegram replies here (no polling conflict)
+        if self.path == "/webhook/telegram":
+            username = payload.get("username", "")
+            text = payload.get("text", "").strip()
+            chat_id = payload.get("chat_id")
+            if not username or not text or not chat_id:
+                self.send_response(400)
+                self.send_header("Content-Type", "application/json")
+                self.end_headers()
+                self.wfile.write(json.dumps({"error": "missing username/text/chat_id"}).encode())
+                return
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.end_headers()
+            state = get_lead_state(username)
+            if not state:
+                self.wfile.write(json.dumps({"status": "ignored", "reason": "no state"}).encode())
+                return
+            stage = state.get("stage")
+            if stage == "q1_sent":
+                set_lead_state(username, {**state, "stage": "q2_sent", "q1": text, "chat_id": chat_id})
+                tg_send(chat_id, get_prompt("Q2"))
+                log.info(f"Q2 sent to {username} (via hermes forward)")
+                self.wfile.write(json.dumps({"status": "q2_sent"}).encode())
+            elif stage == "q2_sent":
+                q1 = state.get("q1", "")
+                set_lead_state(username, {**state, "stage": "scoring"})
+                threading.Thread(target=finalize_lead, args=(username, q1, text), daemon=True).start()
+                log.info(f"Scoring started for {username} (via hermes forward)")
+                self.wfile.write(json.dumps({"status": "scoring"}).encode())
+            else:
+                self.wfile.write(json.dumps({"status": "ignored", "stage": stage}).encode())
+            return
+
+        if self.path != "/webhook/capture":
+            self.send_response(404)
             self.end_headers()
             return
 
@@ -325,8 +393,8 @@ class WebhookHandler(BaseHTTPRequestHandler):
 
 
 if __name__ == "__main__":
-    # Start Telegram polling in background
-    threading.Thread(target=telegram_poll_loop, daemon=True).start()
+    # Telegram polling is handled by Hermes gateway (single poller).
+    # Lead replies are forwarded here via POST /webhook/telegram.
 
     # Start webhook server
     server = HTTPServer(("0.0.0.0", PORT), WebhookHandler)
