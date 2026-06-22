@@ -7,5 +7,6 @@ Refer tuan nay: {{refer_this_week}} (tuan truoc: {{refer_last_week}})
 Tao checklist hom nay cho {{name}}.
 Toi da 3 viec. Moi viec 1 dong ngan gon.
 Cu the cho kenh {{channel}}.
+Neu kenh X: chi focus thread, target geo Canada/Italy/Germany/UAE/France/Saudi/UK/Poland.
 KHONG chao hoi. KHONG giai thich dai.
 Format: 1. [viec] / 2. [viec] / 3. [viec]
