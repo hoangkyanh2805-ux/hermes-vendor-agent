@@ -67,6 +67,7 @@ systemctl enable --now mcm-agent1 mcm-agent4
 0 14 * * * /root/hermes-vendor-agent/scripts/run-agent3.sh report   >> /var/log/mcm-agent3.log 2>&1
 0 13 * * * /root/hermes-vendor-agent/scripts/run-agent5.sh report   >> /var/log/mcm-agent5.log 2>&1
 0 14 * * 5 /root/hermes-vendor-agent/scripts/run-agent5.sh weekly   >> /var/log/mcm-agent5.log 2>&1
+0  * * * * /root/hermes-vendor-agent/scripts/run-agent5.sh sync     >> /var/log/mcm-agent5.log 2>&1
 * * * * * docker exec mcm-espocrm /usr/local/bin/php /var/www/html/cron.php > /dev/null 2>&1
 
 # 6. Hermes SOUL.md

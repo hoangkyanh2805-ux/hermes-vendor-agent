@@ -3,7 +3,8 @@ Agent 5 - Project Monitor Agent
 Cron:
   0 13 * * *   → daily report (8PM UTC+7)
   0 14 * * 5   → weekly summary (9PM UTC+7 Friday)
-Usage: agent5.py [report|weekly]
+  0  * * * *   → sync Sheet → EspoCRM (every hour)
+Usage: agent5.py [report|weekly|sync]
 """
 
 import os, sys, json, time, logging, subprocess, urllib.request, urllib.parse, base64
@@ -20,6 +21,9 @@ ROUTER_URL = os.environ.get("OPENAI_BASE_URL", "http://127.0.0.1:20128/v1")
 HIEP_CHAT_ID = int(os.environ.get("ADMIN_CHAT_ID", "672890533"))
 MODEL = "kr/claude-sonnet-4.5"
 REPO_DIR = "/root/hermes-vendor-agent"
+ESPO_URL = os.environ.get("ESPOCRM_URL", "http://localhost:8080")
+ESPO_USER = os.environ.get("ESPO_USER", "admin")
+ESPO_PASS = os.environ.get("ESPO_PASS", "")
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 log = logging.getLogger("agent5")
@@ -350,6 +354,163 @@ Flagged: {stats['flagged']} người cần chú ý
     return report
 
 
+# --- EspoCRM helpers ---
+def _espo_auth():
+    creds = base64.b64encode(f"{ESPO_USER}:{ESPO_PASS}".encode()).decode()
+    return f"Basic {creds}"
+
+def espo_request(method, path, body=None):
+    """Call EspoCRM REST API. Returns parsed JSON or None on error."""
+    url = f"{ESPO_URL}/api/v1/{path}"
+    data = json.dumps(body).encode() if body else None
+    req = urllib.request.Request(url, data=data, method=method)
+    req.add_header("Authorization", _espo_auth())
+    req.add_header("Content-Type", "application/json")
+    try:
+        resp = urllib.request.urlopen(req, timeout=10)
+        return json.loads(resp.read())
+    except urllib.error.HTTPError as e:
+        log.warning(f"espo {method} {path}: HTTP {e.code} — {e.read().decode()[:200]}")
+        return None
+    except Exception as e:
+        log.error(f"espo {method} {path}: {e}")
+        return None
+
+def espo_find_contact(telegram_username):
+    """Search EspoCRM Contact by cTelegramUsername. Returns {id, ...} or None."""
+    username = telegram_username.lstrip("@")
+    handle = f"@{username}"
+    path = (
+        "Contact"
+        "?where[0][type]=equals"
+        f"&where[0][attribute]=cTelegramUsername"
+        f"&where[0][value]={urllib.parse.quote(handle)}"
+        "&select=id,firstName,lastName,cStatus,cOnboardDay,cTotalEarn,cScore,cPath,cChannel"
+        "&maxSize=1"
+    )
+    result = espo_request("GET", path)
+    if result and result.get("list"):
+        return result["list"][0]
+    return None
+
+def espo_create_contact(fields):
+    """Create a new Contact in EspoCRM. Returns created record or None."""
+    return espo_request("POST", "Contact", fields)
+
+def espo_update_contact(espo_id, fields):
+    """Patch an existing Contact. Returns updated record or None."""
+    return espo_request("PUT", f"Contact/{espo_id}", fields)
+
+def _parse_name(full_name):
+    parts = full_name.strip().split(None, 1)
+    return parts[0], parts[1] if len(parts) > 1 else ""
+
+def _row_to_espo_fields(row):
+    """Map a Sheet row (list) to EspoCRM Contact field dict."""
+    def safe(idx, default=""):
+        return row[idx].strip() if len(row) > idx and row[idx] else default
+
+    full_name = safe(1)
+    first, last = _parse_name(full_name) if full_name else ("", "")
+    username = safe(2)
+    handle = f"@{username.lstrip('@')}" if username else ""
+
+    fields = {
+        "firstName": first,
+        "lastName": last,
+        "cTelegramUsername": handle,
+        "cSource": safe(3),
+        "cChannel": safe(4),
+        "cScore": safe(5),
+        "cPath": safe(6),
+        "cStatus": safe(7),
+    }
+    onboard_day = safe(8)
+    if onboard_day.isdigit():
+        fields["cOnboardDay"] = int(onboard_day)
+
+    total_earn = safe(13)
+    try:
+        fields["cTotalEarn"] = float(total_earn)
+    except (ValueError, TypeError):
+        pass
+
+    return fields
+
+def _needs_update(existing, new_fields):
+    """Return only fields that differ from EspoCRM existing record."""
+    updates = {}
+    field_map = {
+        "cStatus": "cStatus",
+        "cOnboardDay": "cOnboardDay",
+        "cTotalEarn": "cTotalEarn",
+        "cScore": "cScore",
+        "cPath": "cPath",
+        "cChannel": "cChannel",
+        "firstName": "firstName",
+        "lastName": "lastName",
+    }
+    for f in field_map:
+        new_val = new_fields.get(f)
+        old_val = existing.get(f)
+        if new_val is not None and str(new_val) != str(old_val or ""):
+            updates[f] = new_val
+    return updates
+
+
+# --- Sheet → CRM sync ---
+def sync_sheet_to_crm():
+    rows = sheets_read()
+    if not rows:
+        log.warning("sync: no rows from Sheet")
+        return
+
+    created = updated = skipped = errors = 0
+
+    for i, row in enumerate(rows):
+        if len(row) < 3:
+            continue
+        username = row[2].strip().lstrip("@") if row[2] else ""
+        if not username:
+            continue
+
+        try:
+            fields = _row_to_espo_fields(row)
+            existing = espo_find_contact(username)
+
+            if existing is None:
+                result = espo_create_contact(fields)
+                if result:
+                    created += 1
+                    log.info(f"sync: created Contact @{username}")
+                else:
+                    errors += 1
+                    log.error(f"sync: failed to create @{username}")
+            else:
+                diff = _needs_update(existing, fields)
+                if diff:
+                    result = espo_update_contact(existing["id"], diff)
+                    if result:
+                        updated += 1
+                        log.info(f"sync: updated @{username}: {list(diff.keys())}")
+                    else:
+                        errors += 1
+                        log.error(f"sync: failed to update @{username}")
+                else:
+                    skipped += 1
+
+        except Exception as e:
+            log.error(f"sync: error row {i} @{username}: {e}")
+            errors += 1
+
+    summary = (
+        f"Sheet→CRM sync: {len(rows)} rows | "
+        f"+{created} created | {updated} updated | {skipped} unchanged | {errors} errors"
+    )
+    log.info(summary)
+    return {"created": created, "updated": updated, "skipped": skipped, "errors": errors, "total": len(rows)}
+
+
 # --- Entry point ---
 if __name__ == "__main__":
     mode = sys.argv[1] if len(sys.argv) > 1 else "report"
@@ -365,6 +526,15 @@ if __name__ == "__main__":
         tg_send(HIEP_CHAT_ID, msg)
         log.info("Weekly report sent to Hiep")
 
+    elif mode == "sync":
+        result = sync_sheet_to_crm()
+        if result and result["errors"] > 0:
+            tg_send(
+                HIEP_CHAT_ID,
+                f"⚠️ Sheet→CRM sync lỗi: {result['errors']} contacts không sync được\n"
+                f"Check log: journalctl -u mcm-agent5 -n 30"
+            )
+
     else:
-        log.error(f"Unknown mode: {mode}. Use report|weekly")
+        log.error(f"Unknown mode: {mode}. Use report|weekly|sync")
         sys.exit(1)
