@@ -202,6 +202,44 @@ def _safe_check(fn):
         return False
 
 
+# --- Activity Log ---
+def sheets_read_activity():
+    try:
+        token = get_token()
+        range_enc = urllib.parse.quote("Activity Log!A2:H")
+        url = f"https://sheets.googleapis.com/v4/spreadsheets/{SHEET_ID}/values/{range_enc}"
+        req = urllib.request.Request(url)
+        req.add_header("Authorization", f"Bearer {token}")
+        resp = urllib.request.urlopen(req, timeout=15)
+        return json.loads(resp.read()).get("values", [])
+    except Exception as e:
+        log.error(f"sheets_read_activity error: {e}")
+        return []
+
+def get_trigger_stats_today():
+    rows = sheets_read_activity()
+    today_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    vip = first_ref = fail = total = 0
+    for row in rows:
+        if len(row) < 6:
+            continue
+        action = row[3] if len(row) > 3 else ""
+        ts = row[5] if len(row) > 5 else ""
+        success = row[6] if len(row) > 6 else "TRUE"
+        if not action.startswith("trigger_"):
+            continue
+        if not ts.startswith(today_str):
+            continue
+        total += 1
+        if "vip_upgrade" in action:
+            vip += 1
+        elif "first_refer" in action:
+            first_ref += 1
+        if success == "FALSE":
+            fail += 1
+    return {"total": total, "vip_upgrade": vip, "first_refer": first_ref, "fail": fail}
+
+
 # --- Sheet stats ---
 def get_sheet_stats(rows):
     statuses = {}
@@ -274,11 +312,24 @@ def build_daily_report():
 
     rows = sheets_read()
     stats = get_sheet_stats(rows)
+    trigger_stats = get_trigger_stats_today()
     done, total_steps = compute_progress()
     progress_pct = round(done / total_steps * 100)
 
     commit_lines = "\n".join(f"  • {c}" for c in commits) if commits else "  (không có commit)"
     error_lines = "\n".join(f"  ⚠️ {e}" for e in errors) if errors else "  Không có lỗi"
+
+    if trigger_stats["total"] > 0:
+        trigger_block = (
+            f"VIP upgrades: {trigger_stats['vip_upgrade']} | "
+            f"First refers: {trigger_stats['first_refer']}\n"
+            f"  Tổng: {trigger_stats['total']} | "
+            f"Lỗi: {trigger_stats['fail']}"
+        )
+    else:
+        trigger_block = "  Chưa có trigger event"
+
+    agent3_trigger_ok = check_http("http://localhost:3002/health")
 
     report = f"""━━━━━━━━━━━━━━━━━━━━━━
 MCM BUILD — {day_name} {date_str}
@@ -286,6 +337,7 @@ MCM BUILD — {day_name} {date_str}
 Agent 1 (Capture):    {status_icon(agent1_ok)}
 Agent 2 (Onboard):    {status_icon(_cron_has("run-agent2"))}
 Agent 3 (Daily Loop): {status_icon(_cron_has("run-agent3"))}
+Agent 3 (Trigger):    {status_icon(agent3_trigger_ok)}
 Agent 4 (CRM Sync):   {status_icon(agent4_ok)}
 Agent 5 (Monitor):    {status_icon(True)}
 Hermes Gateway:       {status_icon(hermes_ok)}
@@ -297,6 +349,9 @@ Affiliate: {stats['active']} active / {stats['total']} total
 Commission: ${stats['total_earn']}
 Top: @{stats['top_user']} ({stats['top_count']} refer)
 Cần chú ý: {stats['flagged']} người không hoạt động 3+ ngày
+
+Trigger Events hôm nay:
+{trigger_block}
 
 Commit hôm nay: {len(commits)}
 {commit_lines}
