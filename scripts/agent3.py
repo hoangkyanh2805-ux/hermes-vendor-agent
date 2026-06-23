@@ -1,10 +1,10 @@
 """
 Agent 3 - Daily Loop Agent
 Usage: agent3.py [checklist|coaching|report]
-Cron:
-  0 0 * * *  → checklist (7AM UTC+7)
-  0 7 * * *  → coaching  (2PM UTC+7)
-  0 14 * * * → report    (9PM UTC+7)
+Cron (VPS timezone UTC+7):
+  0 7  * * *  → checklist (7AM)
+  0 14 * * *  → coaching  (2PM)
+  0 21 * * *  → report    (9PM)
 """
 
 import os, json, sys, time, logging, threading, urllib.request, urllib.parse, base64
@@ -23,7 +23,7 @@ HIEP_CHAT_ID = int(os.environ.get("ADMIN_CHAT_ID", "672890533"))
 MODEL = "kr/claude-sonnet-4.5"
 AGENT1_STATE = "/root/.hermes/agent1_state.json"
 AGENT3_PORT = int(os.environ.get("AGENT3_PORT", "3002"))
-INTERNAL_TOKEN = os.environ.get("AGENT_INTERNAL_TOKEN", "mcm-internal-2026")
+INTERNAL_TOKEN = os.environ.get("AGENT_INTERNAL_TOKEN", "mcm-internal-2026")  # set AGENT_INTERNAL_TOKEN in .env
 COOLDOWN_FILE = Path("/root/.hermes/agent3_cooldown.json")
 PENDING_FILE = Path("/root/.hermes/agent3_pending.json")
 DEBOUNCE_SECONDS = 300  # 5 minutes
@@ -33,6 +33,17 @@ COOLDOWN_HOURS = {
     "first_refer": 876000,  # once only (~100 years)
     "rank_up": 6,
     "debounced": 1,
+}
+
+# Persona inject: (status, situation) → (name, style)
+# situation = "inactive" khi last_post > 3 ngày, "normal" còn lại
+PERSONA_MAP = {
+    ("VIP",        "normal"):   ("Justin Welsh",    "positioning, protect brand, scale có chọn lọc"),
+    ("Active",     "inactive"): ("Chris Voss",      "tactical empathy, re-engage không áp lực"),
+    ("Active",     "normal"):   ("Gary Vee",        "volume, action-first, không ngại thô"),
+    ("Onboarding", "normal"):   ("Ali Abdaal",      "systems, habit nhỏ, bước từng ngày"),
+    ("New",        "normal"):   ("Alex Hormozi",    "value, fast results, show the math"),
+    ("Cold",       "inactive"): ("Steven Bartlett", "story, gợi lại lý do ban đầu, reconnect"),
 }
 
 FALLBACK = {
@@ -233,18 +244,28 @@ def build_trigger_prompt(name, channel, events, context):
     total_earn = context.get("total_earn", 0)
     rank = context.get("rank", "?")
     total_affiliates = context.get("total_affiliates", "?")
+    status = context.get("status", "Active")
+    last_post_str = context.get("last_post", "")
+
     tone = "Mentor (tận tình hướng dẫn)" if join_days < 30 else "Partner (đồng hành ngang vai)"
+
+    situation = "inactive" if days_since(last_post_str) > 3 else "normal"
+    persona_name, persona_style = PERSONA_MAP.get(
+        (status, situation),
+        ("Gary Vee", "action-first, volume, không ngại thô")
+    )
 
     if len(events) > 1:
         event_desc = "Nhiều cột mốc cùng lúc: " + ", ".join(events)
     else:
         event_desc = {
-            "vip_upgrade": f"vừa lên VIP",
+            "vip_upgrade": "vừa lên VIP",
             "first_refer": "có lead đầu tiên",
             "rank_up": f"lên hạng #{rank}",
         }.get(events[0], events[0])
 
     return (
+        f"Tư duy như {persona_name} ({persona_style}).\n\n"
         f"Affiliate: {name}\nKênh: {channel}\nSự kiện: {event_desc}\n"
         f"Thông tin: gia nhập {join_days} ngày trước, {total_refer} refer, "
         f"earn ${total_earn}, rank #{rank}/{total_affiliates}\n"
@@ -286,6 +307,8 @@ def fire_trigger_message(affiliate_id, event_type, events, context):
                 context["total_refer"] = safe_int(get(row, "refer_this_week")) + safe_int(get(row, "refer_last_week"))
                 context["total_earn"] = safe_int(get(row, "total_earn"))
                 context["rank"] = safe_int(get(row, "rank")) or "?"
+                context["status"] = get(row, "status") or "Active"
+                context["last_post"] = get(row, "last_post") or ""
                 context["total_affiliates"] = len([r for r in rows if len(r) > COL["status"] and r[COL["status"]] in ("Active", "VIP")])
                 try:
                     ds = affiliate_id.split("-")[1]

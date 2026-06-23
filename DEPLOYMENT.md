@@ -7,12 +7,16 @@
 
 ## Services Running
 
-| Service | Port | Status | PID | Command |
-|---|---|---|---|---|
-| Agent 1 (Capture) | 3000 | ✅ Running | - | `systemctl status mcm-agent1` |
-| Agent 4 (CRM Sync) | 3001 | ✅ Running | 33764 | `systemctl status mcm-agent4` |
-| Hermes Gateway | - | ✅ Running | 35189 | Telegram polling |
-| 9Router | 20128 | ✅ Running | 27271 | LLM inference |
+| Service | Port | Status | Command |
+|---|---|---|---|
+| Agent 1 (Capture + Telegram polling) | 3000 | ✅ Running | `systemctl status mcm-agent1` |
+| Agent 4 (CRM Sync) | 3001 | ✅ Running | `systemctl status mcm-agent4` |
+| Agent 3 (Trigger server) | 3002 | ✅ Running | embedded trong mcm-agent1 cron |
+| Dashboard (mcm-web) | 3003 | ✅ Running | `systemctl status mcm-web` |
+| EspoCRM Docker | 8080 | ✅ Running | `docker ps \| grep espocrm` |
+| 9Router (LLM proxy) | 20128 | ✅ Running | `ps aux \| grep 9router` |
+
+> **Note:** `hermes-gateway.service` không tồn tại. Agent 1 tự poll Telegram qua `AFFILIATE_BOT_TOKEN` trực tiếp trong systemd service — không cần Hermes Gateway.
 
 ---
 
@@ -167,7 +171,92 @@ cat /root/.hermes/agent2_state.json
 3. ✅ Strategy updated to X-only
 4. ⏳ Monitor first real lead through full D1-D7 flow
 5. ⏳ Verify Agent 3/5 cron executions tonight (8PM, 9PM)
-6. ⏳ Configure EspoCRM webhooks to Agent 4 :3001
+6. ✅ EspoCRM webhooks configured — 4 events → http://103.97.126.28:3001/webhook/espo/*
+
+---
+
+---
+
+## Recovery Procedures
+
+### VPS reboot / service crash
+
+```bash
+# Restart webhook services
+systemctl restart mcm-agent1 mcm-agent4
+
+# Verify recovery
+curl http://localhost:3000/health
+curl http://localhost:3001/health
+
+# Check cron still loaded (cron survives reboot)
+crontab -l
+```
+
+### 9Router offline (LLM calls fail)
+
+Symptoms: agents ghi log "llm error" liên tục, Telegram nhận FALLBACK messages.
+
+```bash
+# Check 9Router process
+ps aux | grep 9router
+# Restart (path depends on install)
+/usr/local/bin/9router restart
+# Verify
+curl http://127.0.0.1:20128/v1/models
+```
+
+Fallback behavior: Agent 3 trigger dùng `FALLBACK` dict hardcoded — không crash, chỉ mất personalization. Agents 1/2 sẽ fail và ghi log error.
+
+### Google Sheets API quota exceeded
+
+Symptoms: `sheets_read error: HTTP 429` trong logs.
+
+```bash
+tail -f /var/log/mcm-agent3.log | grep -i quota
+```
+
+- Quota reset tự động sau 60 giây (read) hoặc 100 giây (write)
+- Không cần làm gì — agents retry tự động ở cron tiếp theo
+- Nếu liên tục: check số lượng affiliate × số cron/ngày — có thể cần tăng quota project
+
+### EspoCRM Docker down
+
+```bash
+docker ps | grep espocrm
+docker start mcm-espocrm
+# hoặc
+cd /root && docker-compose up -d
+```
+
+### Rollback deploy
+
+```bash
+# Xem recent commits
+git -C /root/hermes-vendor-agent log --oneline -10
+
+# Rollback 1 commit (agents cron — không cần restart)
+git -C /root/hermes-vendor-agent revert HEAD --no-edit
+
+# Rollback service agents (cần restart sau)
+git -C /root/hermes-vendor-agent checkout <commit-hash> -- scripts/agent1.py scripts/agent4.py
+systemctl restart mcm-agent1 mcm-agent4
+```
+
+### Agent state bị corrupt
+
+```bash
+# Backup trước
+cp /root/.hermes/agent1_state.json /root/.hermes/agent1_state.json.bak
+
+# Reset state sạch (agent sẽ re-process từ đầu)
+echo '{}' > /root/.hermes/agent1_state.json
+echo '{}' > /root/.hermes/agent2_state.json
+
+# Cooldown/pending agent3
+rm -f /root/.hermes/agent3_cooldown.json
+rm -f /root/.hermes/agent3_pending.json
+```
 
 ---
 
