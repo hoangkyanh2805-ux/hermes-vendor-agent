@@ -202,6 +202,36 @@ def _safe_check(fn):
         return False
 
 
+# --- Bundle packaging ---
+_BUNDLE_ITEMS = [
+    ("CLAUDE.md (SOP + adapt guide)",     lambda: (Path(REPO_DIR) / "CLAUDE.md").exists()),
+    ("skills/ (5 yaml files)",            lambda: len(list((Path(REPO_DIR) / "skills").glob("*.yaml"))) >= 5),
+    ("prompts/ (12 templates)",           lambda: len(list((Path(REPO_DIR) / "prompts").glob("*.txt"))) >= 10),
+    ("README.md + DEPLOYMENT.md",         lambda: (Path(REPO_DIR) / "DEPLOYMENT.md").exists()),
+    ("advisory-board/ (11 personas)",     lambda: (Path(REPO_DIR) / "advisory-board").is_dir()),
+    ("souls/ (5 SOUL files)",             lambda: len(list((Path(REPO_DIR) / "souls").glob("agent*.md"))) >= 5),
+    ("knowledge/ (ICP + books)",          lambda: (Path(REPO_DIR) / "knowledge").is_dir()),
+    ("playbook/ (ops runbook)",           lambda: (Path(REPO_DIR) / "playbook").is_dir()),
+]
+
+def check_bundle_ready():
+    done, total = compute_progress()
+    return done == total
+
+def build_bundle_manifest():
+    lines = ["🎁 BUNDLE SẴN SÀNG — 36/37 SOP ✅", "━━━━━━━━━━━━━━━━━━"]
+    for label, fn in _BUNDLE_ITEMS:
+        ok = _safe_check(fn)
+        lines.append(f"  {'✅' if ok else '❌'} {label}")
+    lines.append("")
+    lines.append("Manual (export thủ công):")
+    lines.append("  ⚙️  Google Sheet template (.csv)")
+    lines.append("  ⚙️  EspoCRM config pack (Entity + Webhooks)")
+    lines.append("")
+    lines.append("Pricing: $497 / $1,997 / $4,997+ / $197mo")
+    return "\n".join(lines)
+
+
 # --- Activity Log ---
 def sheets_read_activity():
     try:
@@ -331,6 +361,8 @@ def build_daily_report():
 
     agent3_trigger_ok = check_http("http://localhost:3002/health")
 
+    bundle_block = ("\n\n" + build_bundle_manifest()) if check_bundle_ready() else ""
+
     report = f"""━━━━━━━━━━━━━━━━━━━━━━
 MCM BUILD — {day_name} {date_str}
 ━━━━━━━━━━━━━━━━━━━━━━
@@ -357,7 +389,7 @@ Commit hôm nay: {len(commits)}
 {commit_lines}
 
 Lỗi gần đây:
-{error_lines}
+{error_lines}{bundle_block}
 ━━━━━━━━━━━━━━━━━━━━━━"""
     return report
 

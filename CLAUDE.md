@@ -319,75 +319,75 @@ Dự kiến live: [ngày]
 ## SOP CHECKLIST — THỨ TỰ BUILD
 
 ### Phase 1 — Nền tảng (Tuần 1)
-- [ ] `1.1` Tạo GitHub repo `hermes-vendor-agent`
-- [ ] `1.2` Tạo folder structure: skills/ prompts/
-- [ ] `1.3` Tạo `.env.example` + `.gitignore`
-- [ ] `1.4` Tạo Google Sheet 2 tab theo schema
-- [ ] `1.5` Setup Google Docs MCP credentials
-- [ ] `1.6` Tạo Telegram Bot qua @BotFather
-- [ ] `1.7` Test kết nối Hermes ↔ Sheet ↔ Telegram
+- [x] `1.1` Tạo GitHub repo `hermes-vendor-agent`
+- [x] `1.2` Tạo folder structure: skills/ prompts/
+- [x] `1.3` Tạo `.env.example` + `.gitignore`
+- [x] `1.4` Tạo Google Sheet 2 tab theo schema
+- [x] `1.5` Setup Google Docs MCP credentials
+- [x] `1.6` Tạo Telegram Bot qua @BotFather
+- [x] `1.7` Test kết nối Hermes ↔ Sheet ↔ Telegram
 
 ### Phase 2 — Agent 1 Capture (Tuần 1)
-- [ ] `2.1` Viết `skills/agent1-capture.yaml`
-- [ ] `2.2` Viết `prompts/qualify.txt`
-- [ ] `2.3` Test webhook nhận payload
-- [ ] `2.4` Test qualify flow 2 câu hỏi
-- [ ] `2.5` Test ghi Sheet đúng fields
-- [ ] `2.6` Test Telegram welcome trong <30 giây
-- [ ] `2.7` Commit: `done: agent1 capture-qualify-sheet-welcome`
+- [x] `2.1` Viết `skills/agent1-capture.yaml`
+- [x] `2.2` Viết `prompts/qualify.txt`
+- [x] `2.3` Test webhook nhận payload
+- [x] `2.4` Test qualify flow 2 câu hỏi
+- [x] `2.5` Test ghi Sheet đúng fields
+- [x] `2.6` Test Telegram welcome trong <30 giây
+- [x] `2.7` Commit: `done: agent1 capture-qualify-sheet-welcome`
 
 ### Phase 3 — Agent 2 Onboard (Tuần 2)
-- [ ] `3.1` Viết `skills/agent2-onboard.yaml`
-- [ ] `3.2` Viết script D1 + `prompts/onboard-d1.txt`
-- [ ] `3.3` Viết script D2 + `prompts/onboard-d2.txt`
-- [ ] `3.4` Viết script D3 + `prompts/onboard-d3.txt`
-- [ ] `3.5` Viết script D4-D7
-- [ ] `3.6` Setup cron 8AM check onboard_day
-- [ ] `3.7` Test với Telegram account test riêng
-- [ ] `3.8` Commit: `done: agent2 D1-D7-scripts-cron`
+- [x] `3.1` Viết `skills/agent2-onboard.yaml`
+- [x] `3.2` Viết script D1 + `prompts/onboard-d1.txt`
+- [x] `3.3` Viết script D2 + `prompts/onboard-d2.txt`
+- [x] `3.4` Viết script D3 + `prompts/onboard-d3.txt`
+- [x] `3.5` Viết script D4-D7
+- [x] `3.6` Setup cron 8AM check onboard_day
+- [x] `3.7` Test với Telegram account test riêng
+- [x] `3.8` Commit: `done: agent2 D1-D7-scripts-cron`
 
 ### Phase 4 — Agent 3 Daily Loop (Tuần 3)
-- [ ] `4.1` Viết `skills/agent3-daily-loop.yaml`
-- [ ] `4.2` Viết `prompts/checklist.txt`
-- [ ] `4.3` Viết `prompts/coaching.txt`
-- [ ] `4.4` Viết `prompts/report-affiliate.txt`
-- [ ] `4.5` Viết `prompts/report-hiep.txt`
-- [ ] `4.6` Setup cron: `0 7 * * *` + `0 14 * * *` + `0 21 * * *`
-- [ ] `4.7` Test 7AM checklist với 1 affiliate
-- [ ] `4.8` Test 9PM report Hiep nhận đúng
-- [ ] `4.9` Commit: `done: agent3 3-cron-checklist-coaching-report`
+- [x] `4.1` Viết `skills/agent3-daily-loop.yaml`
+- [x] `4.2` Viết `prompts/checklist.txt`
+- [x] `4.3` Viết `prompts/coaching.txt`
+- [x] `4.4` Viết `prompts/report-affiliate.txt`
+- [x] `4.5` Viết `prompts/report-hiep.txt`
+- [x] `4.6` Setup cron: `0 7 * * *` + `0 14 * * *` + `0 21 * * *`
+- [x] `4.7` Test 7AM checklist với 1 affiliate
+- [x] `4.8` Test 9PM report Hiep nhận đúng
+- [x] `4.9` Commit: `done: agent3 3-cron-checklist-coaching-report`
 
 ### Phase 5 — Agent 4 CRM Sync (Tuần 4)
-- [ ] `5.1` Cài EspoCRM Docker
-- [ ] `5.2` Tạo custom fields trong Entity Manager
-- [ ] `5.3` Subscribe 4 webhook events
-- [ ] `5.4` Viết `skills/agent4-crm-sync.yaml`
-- [ ] `5.5` Test Lead.create event
-- [ ] `5.6` Test status change → cấp link
-- [ ] `5.7` Migrate data từ Sheet sang EspoCRM
-- [ ] `5.8` Commit: `done: agent4 espocrm-4-webhooks-live`
+- [x] `5.1` Cài EspoCRM Docker
+- [x] `5.2` Tạo custom fields trong Entity Manager
+- [x] `5.3` Subscribe 4 webhook events
+- [x] `5.4` Viết `skills/agent4-crm-sync.yaml`
+- [x] `5.5` Test Lead.create event
+- [x] `5.6` Test status change → cấp link
+- [x] `5.7` Migrate data từ Sheet sang EspoCRM
+- [x] `5.8` Commit: `done: agent4 espocrm-4-webhooks-live`
 
 ### Phase 6 — Agent 5 Monitor (Tuần 4 song song)
 - [ ] `6.1` Setup GitHub webhook → Hermes
-- [ ] `6.2` Viết `skills/agent5-monitor.yaml`
-- [ ] `6.3` Setup cron `0 20 * * *` daily report
-- [ ] `6.4` Setup cron `0 21 * * 5` weekly summary
-- [ ] `6.5` Test Hiep nhận report 8PM đúng format
-- [ ] `6.6` Commit: `done: agent5 pm-monitor-daily-weekly-live`
+- [x] `6.2` Viết `skills/agent5-monitor.yaml`
+- [x] `6.3` Setup cron `0 20 * * *` daily report
+- [x] `6.4` Setup cron `0 21 * * 5` weekly summary
+- [x] `6.5` Test Hiep nhận report 8PM đúng format
+- [x] `6.6` Commit: `done: agent5 pm-monitor-daily-weekly-live`
 
 ---
 
 ## LAUNCH CHECKLIST — TRƯỚC KHI GO LIVE
 
-- [ ] Agent 1: form submit → Telegram trong <30 giây
-- [ ] Agent 2: D1 gửi đúng ngày
-- [ ] Agent 3: 7AM checklist đến Telegram
-- [ ] Agent 3: 9PM report Hiep nhận đủ
-- [ ] Agent 4: EspoCRM event → Hermes phản ứng trong 60 giây
-- [ ] Agent 5: 8PM report format đúng
-- [ ] VPS load < 80% với tất cả agent chạy
-- [ ] .env không bị push lên GitHub
-- [ ] Telegram bot hoạt động 24/7
+- [x] Agent 1: form submit → Telegram trong <30 giây
+- [x] Agent 2: D1 gửi đúng ngày
+- [x] Agent 3: 7AM checklist đến Telegram
+- [x] Agent 3: 9PM report Hiep nhận đủ
+- [x] Agent 4: EspoCRM event → Hermes phản ứng trong 60 giây
+- [x] Agent 5: 8PM report format đúng
+- [x] VPS load < 80% với tất cả agent chạy
+- [x] .env không bị push lên GitHub
+- [x] Telegram bot hoạt động 24/7
 
 ---
 
