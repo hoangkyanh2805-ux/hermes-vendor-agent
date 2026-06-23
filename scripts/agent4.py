@@ -24,6 +24,9 @@ SA_FILE = os.environ.get("GOOGLE_SERVICE_ACCOUNT_FILE", "/root/.hermes/mcm-vendo
 ESPO_SECRET = os.environ.get("ESPO_WEBHOOK_SECRET", "")
 AFFILIATE_BASE_URL = os.environ.get("AFFILIATE_BASE_URL", "https://mcmvendor.com/ref")
 AGENT1_STATE = "/root/.hermes/agent1_state.json"
+AGENT3_URL = os.environ.get("AGENT3_URL", "http://localhost:3002")
+INTERNAL_TOKEN = os.environ.get("AGENT_INTERNAL_TOKEN", "mcm-internal-2026")
+HIEP_CHAT_ID = int(os.environ.get("ADMIN_CHAT_ID", "672890533"))
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 log = logging.getLogger("agent4")
@@ -153,6 +156,24 @@ def get_chat_id(username):
 def gen_lead_id():
     return f"AFF-{datetime.now(timezone.utc).strftime('%Y%m%d')}-{int(time.time()) % 1000:03d}"
 
+def safe_int(val, default=0):
+    try:
+        return int(val) if val else default
+    except (ValueError, TypeError):
+        return default
+
+def call_agent3_trigger(event, affiliate_data):
+    """Fire a real-time trigger to Agent 3. Non-blocking — failures are logged only."""
+    payload = json.dumps({"event": event, **affiliate_data}).encode()
+    try:
+        req = urllib.request.Request(f"{AGENT3_URL}/webhook/trigger", data=payload, method="POST")
+        req.add_header("Content-Type", "application/json")
+        req.add_header("X-Internal-Token", INTERNAL_TOKEN)
+        urllib.request.urlopen(req, timeout=5)
+        log.info(f"call_agent3_trigger: {event} queued for {affiliate_data.get('affiliate_id')}")
+    except Exception as e:
+        log.error(f"call_agent3_trigger failed ({event}): {e}")
+
 
 # --- Event handlers ---
 def _unwrap(payload):
@@ -253,6 +274,14 @@ def handle_status_change(payload):
         )
         tg_send(chat_id, msg)
         sheets_append_log(lead_id, "status_changed", "Active→VIP")
+        call_agent3_trigger("vip_upgrade", {
+            "affiliate_id": lead_id,
+            "name": name,
+            "username": username,
+            "channel": row[COL["channel"]] if len(row) > COL["channel"] else "x",
+            "total_refer": safe_int(row[COL["refer_this_week"]]) if len(row) > COL["refer_this_week"] else 0,
+            "total_earn": safe_int(row[COL["total_earn"]]) if len(row) > COL["total_earn"] else 0,
+        })
 
     elif new_status == "Churned":
         sheets_append_log(lead_id, "status_changed", f"{old_status}→Churned")
@@ -295,10 +324,11 @@ def handle_opportunity(payload):
     # Update last_contact
     sheets_update_cell(row_num, "J", datetime.now(timezone.utc).isoformat())
 
+    name = row[COL["name"]] if len(row) > COL["name"] else affiliate_username
+    chat_id = get_chat_id(affiliate_username)
+
     # Notify affiliate
     if amount > 0:
-        name = row[COL["name"]] if len(row) > COL["name"] else affiliate_username
-        chat_id = get_chat_id(affiliate_username)
         msg = (
             f"💰 Bạn vừa có referral mới!\n"
             f"Commission: +${amount:.2f}\n"
@@ -306,6 +336,17 @@ def handle_opportunity(payload):
             f"Refer tuần này: {refer_this_week} lead"
         )
         tg_send(chat_id, msg)
+
+    # Fire real-time trigger on first ever refer
+    if refer_this_week == 1:
+        call_agent3_trigger("first_refer", {
+            "affiliate_id": lead_id,
+            "name": name,
+            "username": affiliate_username,
+            "channel": row[COL["channel"]] if len(row) > COL["channel"] else "x",
+            "total_refer": refer_this_week,
+            "total_earn": round(total_earn, 2),
+        })
 
     sheets_append_log(lead_id, "opportunity_created", f"amount=${amount:.2f}, opp={opp_name}")
     log.info(f"opportunity: {affiliate_username} +${amount:.2f}, total={total_earn:.2f}")

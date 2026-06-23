@@ -7,8 +7,9 @@ Cron:
   0 14 * * * → report    (9PM UTC+7)
 """
 
-import os, json, sys, time, logging, urllib.request, urllib.parse, base64
-from datetime import datetime, timezone, date
+import os, json, sys, time, logging, threading, urllib.request, urllib.parse, base64
+from datetime import datetime, timezone, date, timedelta
+from http.server import HTTPServer, BaseHTTPRequestHandler
 from pathlib import Path
 from cryptography.hazmat.primitives import serialization, hashes
 from cryptography.hazmat.primitives.asymmetric import padding
@@ -21,6 +22,25 @@ ROUTER_URL = os.environ.get("OPENAI_BASE_URL", "http://127.0.0.1:20128/v1")
 HIEP_CHAT_ID = int(os.environ.get("ADMIN_CHAT_ID", "672890533"))
 MODEL = "kr/claude-sonnet-4.5"
 AGENT1_STATE = "/root/.hermes/agent1_state.json"
+AGENT3_PORT = int(os.environ.get("AGENT3_PORT", "3002"))
+INTERNAL_TOKEN = os.environ.get("AGENT_INTERNAL_TOKEN", "mcm-internal-2026")
+COOLDOWN_FILE = Path("/root/.hermes/agent3_cooldown.json")
+PENDING_FILE = Path("/root/.hermes/agent3_pending.json")
+DEBOUNCE_SECONDS = 300  # 5 minutes
+
+COOLDOWN_HOURS = {
+    "vip_upgrade": 24,
+    "first_refer": 876000,  # once only (~100 years)
+    "rank_up": 6,
+    "debounced": 1,
+}
+
+FALLBACK = {
+    "vip_upgrade": "🎉 {name} vừa lên VIP với {total_refer} refer! Thành quả xứng đáng. Tiếp tục phát huy nhé!",
+    "first_refer": "🔥 Lead đầu tiên rồi {name}! Khởi đầu tuyệt vời. Checklist sáng mai có gợi ý scale tiếp.",
+    "rank_up": "📈 {name} lên hạng #{rank}/{total_affiliates}! Đang đi đúng hướng.",
+    "debounced": "🚀 {name} bùng nổ hôm nay! Top performer tuần này rồi!",
+}
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 log = logging.getLogger("agent3")
@@ -160,6 +180,237 @@ def safe_int(val, default=0):
 def get(row, col_name):
     idx = COL.get(col_name, 99)
     return row[idx].strip() if idx < len(row) else ""
+
+
+# --- Cooldown management ---
+_cooldown_lock = threading.Lock()
+_pending_lock = threading.Lock()
+
+def _load_json(path):
+    try:
+        return json.loads(path.read_text()) if path.exists() else {}
+    except Exception:
+        return {}
+
+def _save_json(path, data):
+    path.write_text(json.dumps(data, indent=2))
+
+def is_on_cooldown(affiliate_id, event):
+    with _cooldown_lock:
+        data = _load_json(COOLDOWN_FILE)
+        last = data.get(affiliate_id, {}).get(event)
+        if not last:
+            return False
+        hours = COOLDOWN_HOURS.get(event, 24)
+        elapsed = (datetime.now(timezone.utc) - datetime.fromisoformat(last)).total_seconds() / 3600
+        return elapsed < hours
+
+def mark_cooldown(affiliate_id, event):
+    with _cooldown_lock:
+        data = _load_json(COOLDOWN_FILE)
+        data.setdefault(affiliate_id, {})[event] = datetime.now(timezone.utc).isoformat()
+        _save_json(COOLDOWN_FILE, data)
+
+def add_to_pending(affiliate_id, event, context):
+    with _pending_lock:
+        data = _load_json(PENDING_FILE)
+        fire_at = (datetime.now(timezone.utc) + timedelta(seconds=DEBOUNCE_SECONDS)).isoformat()
+        if affiliate_id in data:
+            events = data[affiliate_id]["events"]
+            if event not in events:
+                events.append(event)
+            data[affiliate_id]["fire_at"] = fire_at
+            data[affiliate_id]["context"].update(context)
+        else:
+            data[affiliate_id] = {"events": [event], "fire_at": fire_at, "context": context}
+        _save_json(PENDING_FILE, data)
+
+
+# --- Trigger processing ---
+def build_trigger_prompt(name, channel, events, context):
+    join_days = context.get("join_days", 30)
+    total_refer = context.get("total_refer", 0)
+    total_earn = context.get("total_earn", 0)
+    rank = context.get("rank", "?")
+    total_affiliates = context.get("total_affiliates", "?")
+    tone = "Mentor (tận tình hướng dẫn)" if join_days < 30 else "Partner (đồng hành ngang vai)"
+
+    if len(events) > 1:
+        event_desc = "Nhiều cột mốc cùng lúc: " + ", ".join(events)
+    else:
+        event_desc = {
+            "vip_upgrade": f"vừa lên VIP",
+            "first_refer": "có lead đầu tiên",
+            "rank_up": f"lên hạng #{rank}",
+        }.get(events[0], events[0])
+
+    return (
+        f"Affiliate: {name}\nKênh: {channel}\nSự kiện: {event_desc}\n"
+        f"Thông tin: gia nhập {join_days} ngày trước, {total_refer} refer, "
+        f"earn ${total_earn}, rank #{rank}/{total_affiliates}\n"
+        f"Giọng điệu: {tone}\n\n"
+        f"Viết 1 tin nhắn Telegram chúc mừng/khích lệ. Tối đa 4 câu. "
+        f"Thân thiện, cụ thể, có chiều sâu dựa trên thông tin trên. "
+        f"KHÔNG giải thích. Chỉ viết tin nhắn."
+    )
+
+def is_valid_message(text):
+    return bool(text) and 10 <= len(text) <= 600
+
+def get_fallback(event_type, context):
+    template = FALLBACK.get(event_type, FALLBACK["debounced"])
+    return template.format(
+        name=context.get("name", "Bạn"),
+        total_refer=context.get("total_refer", 0),
+        rank=context.get("rank", "?"),
+        total_affiliates=context.get("total_affiliates", "?"),
+    )
+
+def fire_trigger_message(affiliate_id, event_type, events, context):
+    name = context.get("name", "Bạn")
+    username = context.get("username", "").lstrip("@")
+    if not username:
+        log.warning(f"fire_trigger: no username for {affiliate_id}")
+        return
+
+    if is_on_cooldown(affiliate_id, event_type):
+        log.info(f"fire_trigger: {affiliate_id}/{event_type} on cooldown, skip")
+        return
+
+    # Enrich context from Sheet
+    try:
+        rows = sheets_read()
+        for row in rows:
+            if get(row, "lead_id") == affiliate_id:
+                context["channel"] = get(row, "channel") or context.get("channel", "x")
+                context["total_refer"] = safe_int(get(row, "refer_this_week")) + safe_int(get(row, "refer_last_week"))
+                context["total_earn"] = safe_int(get(row, "total_earn"))
+                context["rank"] = safe_int(get(row, "rank")) or "?"
+                context["total_affiliates"] = len([r for r in rows if len(r) > COL["status"] and r[COL["status"]] in ("Active", "VIP")])
+                try:
+                    ds = affiliate_id.split("-")[1]
+                    join_date = date(int(ds[:4]), int(ds[4:6]), int(ds[6:8]))
+                    context["join_days"] = (date.today() - join_date).days
+                except Exception:
+                    context["join_days"] = 30
+                break
+    except Exception as e:
+        log.error(f"fire_trigger: sheet read error: {e}")
+
+    prompt = build_trigger_prompt(name, context.get("channel", "x"), events, context)
+    content = llm(prompt, max_tokens=200)
+
+    if not is_valid_message(content):
+        log.warning(f"fire_trigger: invalid LLM response for {affiliate_id}/{event_type}, using fallback")
+        content = get_fallback(event_type, {**context, "name": name})
+
+    chat_id = get_chat_id(username)
+    result = tg_send(chat_id, content)
+    events_str = "+".join(events)
+
+    if result and result.get("ok"):
+        mark_cooldown(affiliate_id, event_type)
+        sheets_append_log(affiliate_id, f"trigger_{event_type}", f"events={events_str},sent=OK")
+        log.info(f"fire_trigger: {affiliate_id} {event_type} sent OK")
+    else:
+        sheets_append_log(affiliate_id, f"trigger_{event_type}", f"events={events_str},sent=FAIL", success=False)
+        log.error(f"fire_trigger: tg_send failed for {affiliate_id}")
+
+def process_due_pending():
+    with _pending_lock:
+        data = _load_json(PENDING_FILE)
+        now = datetime.now(timezone.utc)
+        due = {k: v for k, v in data.items()
+               if datetime.fromisoformat(v["fire_at"]) <= now}
+        if not due:
+            return
+        for k in due:
+            del data[k]
+        _save_json(PENDING_FILE, data)
+
+    for affiliate_id, item in due.items():
+        events = item["events"]
+        context = item["context"]
+        event_type = "debounced" if len(events) > 1 else events[0]
+        threading.Thread(
+            target=fire_trigger_message,
+            args=(affiliate_id, event_type, events, context),
+            daemon=True
+        ).start()
+
+def debounce_processor():
+    while True:
+        time.sleep(30)
+        try:
+            process_due_pending()
+        except Exception as e:
+            log.error(f"debounce processor error: {e}")
+
+
+# --- Trigger HTTP server ---
+def enqueue_trigger(payload):
+    affiliate_id = payload.get("affiliate_id", "")
+    event = payload.get("event", "")
+    if not affiliate_id or not event:
+        log.warning("enqueue_trigger: missing affiliate_id or event")
+        return
+    if is_on_cooldown(affiliate_id, event):
+        log.info(f"enqueue_trigger: {affiliate_id}/{event} on cooldown, ignoring")
+        return
+    context = {
+        "name": payload.get("name", ""),
+        "username": payload.get("username", "").lstrip("@"),
+        "channel": payload.get("channel", "x"),
+        "total_refer": payload.get("total_refer", 0),
+        "total_earn": payload.get("total_earn", 0),
+        "rank": payload.get("rank", "?"),
+        "total_affiliates": payload.get("total_affiliates", "?"),
+    }
+    log.info(f"enqueue_trigger: queuing {event} for {affiliate_id}")
+    add_to_pending(affiliate_id, event, context)
+
+class TriggerHandler(BaseHTTPRequestHandler):
+    def log_message(self, fmt, *args):
+        log.info(f"{self.client_address[0]} {fmt % args}")
+
+    def do_GET(self):
+        if self.path == "/health":
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(b'{"status":"ok","agent":"agent3-trigger"}')
+        else:
+            self.send_response(404)
+            self.end_headers()
+
+    def do_POST(self):
+        if self.path != "/webhook/trigger":
+            self.send_response(404)
+            self.end_headers()
+            return
+        if self.headers.get("X-Internal-Token", "") != INTERNAL_TOKEN:
+            self.send_response(401)
+            self.end_headers()
+            log.warning(f"trigger: invalid token from {self.client_address[0]}")
+            return
+        length = int(self.headers.get("Content-Length", 0))
+        body = self.rfile.read(length)
+        try:
+            payload = json.loads(body)
+        except json.JSONDecodeError:
+            self.send_response(400)
+            self.end_headers()
+            return
+        self.send_response(200)
+        self.send_header("Content-Type", "application/json")
+        self.end_headers()
+        self.wfile.write(b'{"status":"queued"}')
+        threading.Thread(target=enqueue_trigger, args=(payload,), daemon=True).start()
+
+def run_server():
+    threading.Thread(target=debounce_processor, daemon=True).start()
+    server = HTTPServer(("0.0.0.0", AGENT3_PORT), TriggerHandler)
+    log.info(f"Agent 3 trigger server listening on :{AGENT3_PORT}")
+    server.serve_forever()
 
 
 # --- Mode: CHECKLIST ---
@@ -344,13 +595,16 @@ def run_report(rows):
 # --- Entry point ---
 if __name__ == "__main__":
     mode = sys.argv[1] if len(sys.argv) > 1 else os.environ.get("AGENT3_MODE", "checklist")
-    rows = sheets_read()
-    if mode == "checklist":
-        run_checklist(rows)
-    elif mode == "coaching":
-        run_coaching(rows)
-    elif mode == "report":
-        run_report(rows)
+    if mode == "server":
+        run_server()
     else:
-        log.error(f"Unknown mode: {mode}. Use checklist|coaching|report")
-        sys.exit(1)
+        rows = sheets_read()
+        if mode == "checklist":
+            run_checklist(rows)
+        elif mode == "coaching":
+            run_coaching(rows)
+        elif mode == "report":
+            run_report(rows)
+        else:
+            log.error(f"Unknown mode: {mode}. Use checklist|coaching|report|server")
+            sys.exit(1)
