@@ -164,7 +164,7 @@ def llm(prompt, max_tokens=400):
     return None
 
 
-def _checklist_fallback(name, channel, days_post, refer_this_week, refer_last_week):
+def _checklist_fallback(name, days_post, refer_this_week, refer_last_week):
     if days_post > 3:
         t1 = "Đăng 1 X thread hôm nay — lấy tín hiệu t.me/mcmvendor, rewrite 3 dòng, đặt link affiliate"
     else:
@@ -181,7 +181,7 @@ def _coaching_fallback(name, days_post, refer_this_week, refer_last_week):
     if days_post > 3:
         return (f"{name}, {days_post} ngày chưa đăng bài rồi. "
                 f"Làm ngay: lấy 1 tín hiệu t.me/mcmvendor, rewrite thành X thread 3 dòng, đăng luôn. 5 phút là xong.")
-    drop_pct = round((1 - refer_this_week / refer_last_week) * 100) if refer_last_week > 0 else 30
+    drop_pct = round((1 - refer_this_week / refer_last_week) * 100)
     return (f"{name}, refer tuần này giảm {drop_pct}% so tuần trước. "
             f"Sau mỗi thread, reply luôn 3 comment trong thread đó để boost reach. Thử hôm nay.")
 
@@ -492,7 +492,7 @@ def run_checklist(rows):
         content = llm(prompt, max_tokens=200)
         if not content:
             log.warning(f"LLM unavailable for checklist {username} — using fallback")
-            content = _checklist_fallback(name, channel, days_post, refer_this_week, refer_last_week)
+            content = _checklist_fallback(name, days_post, refer_this_week, refer_last_week)
 
         chat_id = get_chat_id(username)
         result = tg_send(chat_id, content)
