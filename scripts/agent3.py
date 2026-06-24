@@ -20,7 +20,7 @@ SA_FILE = os.environ.get("GOOGLE_SERVICE_ACCOUNT_FILE", "/root/.hermes/mcm-vendo
 ROUTER_KEY = os.environ["OPENAI_API_KEY"]
 ROUTER_URL = os.environ.get("OPENAI_BASE_URL", "http://127.0.0.1:20128/v1")
 HIEP_CHAT_ID = int(os.environ.get("ADMIN_CHAT_ID", "672890533"))
-MODEL = "kr/claude-sonnet-4.5"
+FALLBACK_MODELS = ["kr/claude-sonnet-4.5", "gemini/gemini-2.0-flash"]
 AGENT1_STATE = "/root/.hermes/agent1_state.json"
 AGENT3_PORT = int(os.environ.get("AGENT3_PORT", "3002"))
 INTERNAL_TOKEN = os.environ.get("AGENT_INTERNAL_TOKEN", "mcm-internal-2026")  # set AGENT_INTERNAL_TOKEN in .env
@@ -145,22 +145,45 @@ def tg_send(chat_id, text):
 
 # --- LLM ---
 def llm(prompt, max_tokens=400):
-    data = json.dumps({
-        "model": MODEL,
-        "messages": [{"role": "user", "content": prompt}],
-        "max_tokens": max_tokens,
-        "stream": False,
-    }).encode()
-    req = urllib.request.Request(f"{ROUTER_URL}/chat/completions", data=data)
-    req.add_header("Authorization", f"Bearer {ROUTER_KEY}")
-    req.add_header("Content-Type", "application/json")
-    try:
-        resp = urllib.request.urlopen(req, timeout=30)
-        r = json.loads(resp.read())
-        return r["choices"][0]["message"]["content"].strip()
-    except Exception as e:
-        log.error(f"llm error: {e}")
-        return None
+    for model in FALLBACK_MODELS:
+        data = json.dumps({
+            "model": model,
+            "messages": [{"role": "user", "content": prompt}],
+            "max_tokens": max_tokens,
+            "stream": False,
+        }).encode()
+        req = urllib.request.Request(f"{ROUTER_URL}/chat/completions", data=data)
+        req.add_header("Authorization", f"Bearer {ROUTER_KEY}")
+        req.add_header("Content-Type", "application/json")
+        try:
+            resp = urllib.request.urlopen(req, timeout=30)
+            r = json.loads(resp.read())
+            return r["choices"][0]["message"]["content"].strip()
+        except Exception as e:
+            log.error(f"llm error ({model}): {e}")
+    return None
+
+
+def _checklist_fallback(name, channel, days_post, refer_this_week, refer_last_week):
+    if days_post > 3:
+        t1 = "Đăng 1 X thread hôm nay — lấy tín hiệu t.me/mcmvendor, rewrite 3 dòng, đặt link affiliate"
+    else:
+        t1 = "Lấy 1 tín hiệu t.me/mcmvendor → rewrite X thread → đặt affiliate link → đăng"
+    if refer_last_week > 0 and refer_this_week < refer_last_week * 0.7:
+        t2 = "Reply hoặc quote tweet 3 account #xauusd để boost engagement"
+    else:
+        t2 = "Reply 3 tweet #xauusd trong feed để tăng visibility"
+    t3 = "Check dashboard — xem lead hôm qua convert chưa"
+    return f"Checklist hôm nay {name}:\n1. {t1}\n2. {t2}\n3. {t3}"
+
+
+def _coaching_fallback(name, days_post, refer_this_week, refer_last_week):
+    if days_post > 3:
+        return (f"{name}, {days_post} ngày chưa đăng bài rồi. "
+                f"Làm ngay: lấy 1 tín hiệu t.me/mcmvendor, rewrite thành X thread 3 dòng, đăng luôn. 5 phút là xong.")
+    drop_pct = round((1 - refer_this_week / refer_last_week) * 100) if refer_last_week > 0 else 30
+    return (f"{name}, refer tuần này giảm {drop_pct}% so tuần trước. "
+            f"Sau mỗi thread, reply luôn 3 comment trong thread đó để boost reach. Thử hôm nay.")
 
 
 # --- Helpers ---
@@ -449,7 +472,7 @@ def run_checklist(rows):
             continue
 
         name = get(row, "name")
-        channel = get(row, "channel") or "telegram"
+        channel = get(row, "channel") or "x"
         onboard_day = safe_int(get(row, "onboard_day"))
         refer_this_week = safe_int(get(row, "refer_this_week"))
         refer_last_week = safe_int(get(row, "refer_last_week"))
@@ -468,7 +491,8 @@ def run_checklist(rows):
 
         content = llm(prompt, max_tokens=200)
         if not content:
-            continue
+            log.warning(f"LLM unavailable for checklist {username} — using fallback")
+            content = _checklist_fallback(name, channel, days_post, refer_this_week, refer_last_week)
 
         chat_id = get_chat_id(username)
         result = tg_send(chat_id, content)
@@ -504,7 +528,7 @@ def run_coaching(rows):
             continue
 
         name = get(row, "name")
-        channel = get(row, "channel") or "telegram"
+        channel = get(row, "channel") or "x"
 
         template = (PROMPTS_DIR / "coaching.txt").read_text(encoding="utf-8")
         prompt = (template
@@ -516,7 +540,8 @@ def run_coaching(rows):
 
         content = llm(prompt, max_tokens=150)
         if not content:
-            continue
+            log.warning(f"LLM unavailable for coaching {username} — using fallback")
+            content = _coaching_fallback(name, days_post, refer_this_week, refer_last_week)
 
         chat_id = get_chat_id(username)
         result = tg_send(chat_id, content)
