@@ -88,18 +88,98 @@ Hãy để ý inbox nhé! Nếu có câu hỏi gì cứ nhắn tôi 🙌
 
 ---
 
-## FAST_START_KIT
+## FAST_START_KIT_X
 
-Trong lúc mình chuẩn bị nội dung cho {{name}}, đây là 3 việc làm NGAY BÂY GIỜ:
+🔗 Link affiliate của {{name}}: {{tracking_link}}
+Mọi người click link này = hoa hồng về cho bạn.
 
-1️⃣ Join kênh tín hiệu chính thức: https://t.me/mcmvendor
-Đây là nguồn content XAUUSD hàng ngày của bạn.
+Copy tweet này và đăng ngay trên X:
 
-2️⃣ Chụp 1 tín hiệu bất kỳ trong kênh
-Đó là bài đăng đầu tiên của bạn trên {{channel}}.
+---
+🔔 XAUUSD Signal — Gold đang vào vùng quan trọng hôm nay
 
-3️⃣ Cập nhật bio trên {{channel}}
-Thêm: "XAUUSD signal | MCM Affiliate" vào phần mô tả.
+Mình theo kênh signal này mỗi ngày, chuẩn xác và miễn phí:
+{{tracking_link}}
 
-Link affiliate cá nhân sẽ đến trong vài phút.
-Hướng dẫn chi tiết ngày 1 sẽ gửi ngay sau đây 🚀
+#xauusd #gold #trading #forex
+---
+
+Chỉ cần paste lên X, đăng là xong.
+Hướng dẫn đầy đủ ngày 1 đến ngay sau đây 🚀
+
+---
+
+## FAST_START_KIT_TIKTOK
+
+🔗 Link affiliate của {{name}}: {{tracking_link}}
+Mọi người click link này = hoa hồng về cho bạn.
+
+Script video 30 giây để quay ngay:
+
+---
+Mở đầu: "Gold đang ở vùng rất đáng chú ý hôm nay..."
+Nội dung: Mở app chart, chỉ vào vùng giá đang test
+CTA: "Link tín hiệu miễn phí mình để trong bio"
+Caption: #xauusd #gold #trading #forex #vang
+Bio: Thêm {{tracking_link}} vào link bio TikTok
+---
+
+Quay xong đăng ngay — không cần chỉnh nhiều.
+Hướng dẫn đầy đủ ngày 1 đến ngay sau đây 🚀
+
+---
+
+## FAST_START_KIT_TELEGRAM
+
+🔗 Link affiliate của {{name}}: {{tracking_link}}
+Mọi người click link này = hoa hồng về cho bạn.
+
+Forward tín hiệu này vào group/channel của bạn và thêm caption:
+
+---
+[Forward 1 tin từ t.me/mcmvendor]
+
+👆 Kênh tín hiệu XAUUSD mình đang theo — chuẩn và miễn phí.
+Ai muốn nhận signal hàng ngày: {{tracking_link}}
+---
+
+Làm ngay bây giờ, 2 phút là xong.
+Hướng dẫn đầy đủ ngày 1 đến ngay sau đây 🚀
+
+---
+
+## FAST_START_KIT_FACEBOOK
+
+🔗 Link affiliate của {{name}}: {{tracking_link}}
+Mọi người click link này = hoa hồng về cho bạn.
+
+Copy post này và đăng lên Facebook ngay:
+
+---
+📈 Update XAUUSD hôm nay!
+
+Gold đang test vùng quan trọng — ai trade vàng thì chú ý nhé.
+
+Mình đang theo kênh signal này, chuẩn xác và hoàn toàn miễn phí:
+👉 {{tracking_link}}
+
+#xauusd #vàng #trading #đầutư
+---
+
+Đăng xong tag mình để mình biết nhé!
+Hướng dẫn đầy đủ ngày 1 đến ngay sau đây 🚀
+
+---
+
+## FAST_START_KIT_NONE
+
+🔗 Link affiliate của {{name}}: {{tracking_link}}
+Đây là link cá nhân — ai click vào = hoa hồng về cho bạn.
+
+3 việc làm ngay bây giờ:
+
+1️⃣ Join kênh tín hiệu: https://t.me/mcmvendor
+2️⃣ Lưu link trên vào đâu đó để dùng ngay
+3️⃣ Chia sẻ link này với 1 người bạn quan tâm đến gold/trading
+
+Hướng dẫn xây kênh từ đầu sẽ đến ngay sau đây 🚀

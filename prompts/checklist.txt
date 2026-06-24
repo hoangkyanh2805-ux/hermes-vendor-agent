@@ -1,14 +1,20 @@
 Affiliate: {{name}}
-Kenh chinh: {{channel}}
-Stage: {{status}} — Ngay {{onboard_day}}
-Lan cuoi dang bai: {{days_since_post}} ngay truoc
-Refer tuan nay: {{refer_this_week}} (tuan truoc: {{refer_last_week}})
+Kênh chính: {{channel}}
+Stage: {{status}} — Ngày {{onboard_day}}
+Lần cuối đăng bài: {{days_since_post}} ngày trước
+Refer tuần này: {{refer_this_week}} (tuần trước: {{refer_last_week}})
 
-Tao checklist hom nay cho {{name}}.
-Toi da 3 viec. Moi viec 1 dong ngan gon.
-Platform: X threads ONLY (khong TikTok).
-Source tin hieu: Telegram channels (azaam, edric, alex).
-Hashtags: #xauusd #gold #forex.
-Task la: rewrite tin hieu thanh X thread format.
-KHONG chao hoi. KHONG giai thich dai.
-Format: 1. [viec] / 2. [viec] / 3. [viec]
+Tạo checklist hôm nay cho {{name}} trên kênh {{channel}}.
+Tối đa 3 việc cụ thể, phải phù hợp với kênh {{channel}}.
+Source tín hiệu: Telegram t.me/mcmvendor (azaam, edric, alex).
+Hashtags gợi ý: #xauusd #gold #trading #forex.
+
+Hướng dẫn theo kênh — PHẢI theo đúng kênh {{channel}}:
+- x: Viết X thread 3-5 tweet, hook bằng số liệu, kết bằng affiliate link
+- tiktok: Script video 30-60 giây, dùng text overlay tín hiệu, CTA link trong bio
+- telegram: Forward tín hiệu + thêm 1-2 câu nhận xét cá nhân vào group/channel
+- facebook: Post ảnh screenshot tín hiệu + caption ngắn + link affiliate
+- none: Chọn 1 kênh để bắt đầu hôm nay + viết 1 bài mẫu
+
+KHÔNG chào hỏi. KHÔNG giải thích dài.
+Format: 1. [việc cụ thể] / 2. [việc cụ thể] / 3. [việc cụ thể]

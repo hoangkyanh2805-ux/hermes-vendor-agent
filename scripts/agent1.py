@@ -25,6 +25,7 @@ ROUTER_URL = os.environ.get("OPENAI_BASE_URL", "http://127.0.0.1:20128/v1")
 MODEL = "kr/claude-sonnet-4.5"
 STATE_FILE = "/root/.hermes/agent1_state.json"
 FORM_LINK = os.environ.get("AFFILIATE_FORM_URL", "https://t.me/hiephoang47")
+AFFILIATE_BASE_URL = os.environ.get("AFFILIATE_BASE_URL", "https://mcm-vendor.com/go")
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 log = logging.getLogger("agent1")
@@ -258,12 +259,15 @@ def finalize_lead(username, q1, q2):
     tg_send(chat_id, welcome)
     log.info(f"Welcome sent to {username} (path={path})")
 
-    # Send Fast Start Kit immediately — affiliate has 3 actions to do right now
-    # while waiting for D1 (no more dead air between welcome and next message)
-    fast_kit = get_prompt("FAST_START_KIT", name=name, channel=channel if channel != "none" else "kênh của bạn")
+    # Fast Start Kit: tracking link + copy-paste post template per channel
+    tracking_link = f"{AFFILIATE_BASE_URL}/{username}"
+    kit_key = f"FAST_START_KIT_{channel.upper()}" if channel != "none" else "FAST_START_KIT_NONE"
+    fast_kit = get_prompt(kit_key, name=name, tracking_link=tracking_link)
+    if not fast_kit or fast_kit.startswith("[prompt"):
+        fast_kit = get_prompt("FAST_START_KIT_NONE", name=name, tracking_link=tracking_link)
     if fast_kit and not fast_kit.startswith("[prompt"):
         tg_send(chat_id, fast_kit)
-        log.info(f"Fast Start Kit sent to {username}")
+        log.info(f"Fast Start Kit ({kit_key}) sent to {username}")
 
     # Trigger Agent 2 D1 immediately — don't wait for the 8AM cron
     try:
