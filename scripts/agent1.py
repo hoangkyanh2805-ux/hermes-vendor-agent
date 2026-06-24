@@ -4,7 +4,7 @@ Webhook server: POST /webhook/capture
 Flow: receive lead -> Q1 -> Q2 -> score -> write sheet -> welcome -> trigger agent2
 """
 
-import os, json, time, threading, logging, urllib.request, urllib.parse
+import os, sys, json, time, threading, logging, urllib.request, urllib.parse, subprocess
 from datetime import datetime, timezone
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from pathlib import Path
@@ -257,6 +257,26 @@ def finalize_lead(username, q1, q2):
     welcome = get_prompt(prompt_key, name=name)
     tg_send(chat_id, welcome)
     log.info(f"Welcome sent to {username} (path={path})")
+
+    # Send Fast Start Kit immediately — affiliate has 3 actions to do right now
+    # while waiting for D1 (no more dead air between welcome and next message)
+    fast_kit = get_prompt("FAST_START_KIT", name=name, channel=channel if channel != "none" else "kênh của bạn")
+    if fast_kit and not fast_kit.startswith("[prompt"):
+        tg_send(chat_id, fast_kit)
+        log.info(f"Fast Start Kit sent to {username}")
+
+    # Trigger Agent 2 D1 immediately — don't wait for the 8AM cron
+    try:
+        trigger_data = {"username": username, "chat_id": str(chat_id), "name": name,
+                        "channel": channel, "score": score}
+        trigger_file = f"/root/.hermes/agent2_trigger_{username}.json"
+        Path(trigger_file).write_text(json.dumps(trigger_data))
+        a2_script = str(Path(__file__).parent / "agent2.py")
+        subprocess.Popen([sys.executable, a2_script, "--immediate", trigger_file],
+                         env=os.environ.copy())
+        log.info(f"Agent 2 D1 triggered immediately for {username}")
+    except Exception as e:
+        log.error(f"Failed to trigger agent2 immediately: {e}")
 
     clear_lead_state(username)
 

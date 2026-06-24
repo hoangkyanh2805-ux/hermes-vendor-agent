@@ -4,13 +4,16 @@ Cron: 8AM daily - check Google Sheet for affiliates needing D-X message today
 Flow: read sheet -> find pending onboard_day -> Claude generate content by channel -> send Telegram -> update sheet
 """
 
-import os, json, time, logging, urllib.request, urllib.parse, base64
+import os, sys, json, time, logging, urllib.request, urllib.parse, base64
 from datetime import datetime, timezone
 from pathlib import Path
 from cryptography.hazmat.primitives import serialization, hashes
 from cryptography.hazmat.primitives.asymmetric import padding
 
-BOT_TOKEN = os.environ["TELEGRAM_BOT_TOKEN"]
+# Use dedicated affiliate bot when set; falls back to Hermes bot.
+# Set AFFILIATE_BOT_TOKEN in .env to prevent Hermes AI execution logs
+# from leaking into affiliate chats (2-bot separation).
+BOT_TOKEN = os.environ.get("AFFILIATE_BOT_TOKEN") or os.environ["TELEGRAM_BOT_TOKEN"]
 SHEET_ID = os.environ["GOOGLE_SHEET_ID"]
 SA_FILE = os.environ.get("GOOGLE_SERVICE_ACCOUNT_FILE", "/root/.hermes/mcm-vendor-sa.json")
 ROUTER_KEY = os.environ["OPENAI_API_KEY"]
@@ -260,5 +263,54 @@ def run():
     log.info(f"Agent 2 done — sent {sent_count} messages")
 
 
+def run_immediate(username, chat_id, name, channel, score="Warm"):
+    """Send D1 content now — called by agent1 right after qualify, bypassing the 8AM cron."""
+    log.info(f"Immediate D1 for {username} ({channel})")
+    content = generate_content(1, name, channel, score)
+    if not content:
+        log.error(f"Failed to generate D1 content for {username}")
+        return
+
+    result = tg_send(chat_id, content)
+    if not (result and result.get("ok")):
+        log.error(f"D1 tg_send failed for {username}")
+        return
+
+    # Find the row in the sheet and update onboard_day/status/last_contact
+    try:
+        rows = sheets_read("Affiliate Master")
+        for i, row in enumerate(rows):
+            def _get(col, r=row):
+                idx = COL.get(col, 99)
+                return r[idx].strip() if idx < len(r) else ""
+
+            if _get("telegram_username").lstrip("@") == username:
+                row_num = i + 2
+                sheets_update_cell(row_num, "I", 1)                                      # onboard_day = 1
+                sheets_update_cell(row_num, "J", datetime.now(timezone.utc).isoformat()) # last_contact
+                sheets_update_cell(row_num, "H", "Onboarding")                           # status
+                sheets_append_log(_get("lead_id"), "Agent2", "onboard_d1_immediate",
+                                  f"channel={channel}", True)
+                log.info(f"D1 immediate — sheet updated for {username}")
+                break
+    except Exception as e:
+        log.error(f"run_immediate sheet update error: {e}")
+
+
 if __name__ == "__main__":
-    run()
+    # Immediate mode: agent1 triggers this right after qualify.
+    # Usage: agent2.py --immediate <trigger_json_file>
+    if len(sys.argv) == 3 and sys.argv[1] == "--immediate":
+        trigger_file = Path(sys.argv[2])
+        try:
+            data = json.loads(trigger_file.read_text())
+            trigger_file.unlink(missing_ok=True)
+        except Exception as e:
+            log.error(f"--immediate: cannot read trigger file {trigger_file}: {e}")
+            sys.exit(1)
+        run_immediate(
+            data["username"], data["chat_id"], data["name"],
+            data["channel"], data.get("score", "Warm")
+        )
+    else:
+        run()

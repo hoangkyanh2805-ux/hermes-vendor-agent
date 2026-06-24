@@ -14,7 +14,7 @@ from pathlib import Path
 from cryptography.hazmat.primitives import serialization, hashes
 from cryptography.hazmat.primitives.asymmetric import padding
 
-BOT_TOKEN = os.environ["TELEGRAM_BOT_TOKEN"]
+BOT_TOKEN = os.environ.get("AFFILIATE_BOT_TOKEN") or os.environ["TELEGRAM_BOT_TOKEN"]
 SHEET_ID = os.environ["GOOGLE_SHEET_ID"]
 SA_FILE = os.environ.get("GOOGLE_SERVICE_ACCOUNT_FILE", "/root/.hermes/mcm-vendor-sa.json")
 ROUTER_KEY = os.environ["OPENAI_API_KEY"]
