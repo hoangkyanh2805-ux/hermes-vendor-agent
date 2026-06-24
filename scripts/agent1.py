@@ -117,6 +117,39 @@ def get_gsheet_token():
     resp = urllib.request.urlopen("https://oauth2.googleapis.com/token", data=data, timeout=10)
     return json.loads(resp.read())["access_token"]
 
+_affiliate_cache = {}          # username -> {name, status, ...}
+_affiliate_cache_ts = 0
+
+def _refresh_affiliate_cache():
+    global _affiliate_cache, _affiliate_cache_ts
+    if time.time() - _affiliate_cache_ts < 300:   # 5-min TTL
+        return
+    try:
+        token = get_gsheet_token()
+        range_enc = urllib.parse.quote("Affiliate Master!A2:P")
+        url = f"https://sheets.googleapis.com/v4/spreadsheets/{SHEET_ID}/values/{range_enc}"
+        req = urllib.request.Request(url)
+        req.add_header("Authorization", f"Bearer {token}")
+        resp = urllib.request.urlopen(req, timeout=10)
+        rows = json.loads(resp.read()).get("values", [])
+        cache = {}
+        for row in rows:
+            uname = row[2].lstrip("@").strip() if len(row) > 2 else ""
+            if uname:
+                cache[uname] = {
+                    "name": row[1] if len(row) > 1 else "",
+                    "status": row[7] if len(row) > 7 else "",
+                }
+        _affiliate_cache = cache
+        _affiliate_cache_ts = time.time()
+    except Exception as e:
+        log.error(f"_refresh_affiliate_cache error: {e}")
+
+def _is_existing_affiliate(username):
+    _refresh_affiliate_cache()
+    info = _affiliate_cache.get(username, {})
+    return info.get("status", "") in ("Onboarding", "Active", "VIP")
+
 def sheets_append(tab, values):
     token = get_gsheet_token()
     range_enc = urllib.parse.quote(f"{tab}!A1")
@@ -353,7 +386,20 @@ def telegram_poll_loop():
                 if text.startswith("/"):
                     command = text.split()[0].lower()
                     if command in ("/start", "/help"):
-                        tg_send(chat_id, get_state_question(state, name) if state else BOT_INTRO)
+                        if state:
+                            tg_send(chat_id, get_state_question(state, name))
+                        elif username and _is_existing_affiliate(username):
+                            # Affiliate not in state (cleared/lost) — restore and update chat_id
+                            set_lead_state(username, {"chat_id": chat_id, "stage": "done"})
+                            tg_send(chat_id,
+                                f"Chào {name}! 👋\n\n"
+                                f"Bạn đã được ghi nhận vào hệ thống MCM Vendor.\n\n"
+                                f"📱 Lộ trình 7 ngày sẽ được gửi mỗi sáng.\n"
+                                f"📊 Checklist hàng ngày lúc 7AM.\n\n"
+                                f"Nếu cần hỗ trợ thêm, liên hệ admin: {FORM_LINK}")
+                            log.info(f"Restored affiliate state for {username} chat_id={chat_id}")
+                        else:
+                            tg_send(chat_id, BOT_INTRO)
                     elif command == "/sethome":
                         tg_send(chat_id, "Agent 1 da nhan /sethome. Neu Hermes Gateway dang chay, gateway se luu home channel cho cron/report.")
                     else:
@@ -383,15 +429,26 @@ def telegram_poll_loop():
                     log.info(f"Existing affiliate {username} asked question, sent guidance")
 
                 else:
-                    # New visitor — save chat_id, send form link (never bot intro)
-                    if username:
-                        existing = get_lead_state(username) or {}
-                        set_lead_state(username, {**existing, "chat_id": chat_id, "stage": "new"})
-                    tg_send(chat_id,
-                        f"Chào bạn! 👋 Để tham gia affiliate MCM Vendor (XAUUSD signal), "
-                        f"vui lòng liên hệ admin: {FORM_LINK}\n\n"
-                        f"Hoặc điền form đăng ký để nhận link affiliate và hoa hồng ngay!")
-                    log.info(f"New visitor {username or chat_id} — saved chat_id, sent form link")
+                    if username and _is_existing_affiliate(username):
+                        # Affiliate state lost — restore silently with current chat_id
+                        set_lead_state(username, {"chat_id": chat_id, "stage": "done"})
+                        tg_send(chat_id,
+                            f"Chào {name}! 👋\n\n"
+                            f"Bạn đã được ghi nhận vào hệ thống MCM Vendor.\n\n"
+                            f"📱 Lộ trình 7 ngày sẽ được gửi mỗi sáng.\n"
+                            f"📊 Checklist hàng ngày lúc 7AM.\n\n"
+                            f"Nếu cần hỗ trợ thêm, liên hệ admin: {FORM_LINK}")
+                        log.info(f"Restored affiliate state for {username} chat_id={chat_id}")
+                    else:
+                        # Truly new visitor — save chat_id, send form link
+                        if username:
+                            existing = get_lead_state(username) or {}
+                            set_lead_state(username, {**existing, "chat_id": chat_id, "stage": "new"})
+                        tg_send(chat_id,
+                            f"Chào bạn! 👋 Để tham gia affiliate MCM Vendor (XAUUSD signal), "
+                            f"vui lòng liên hệ admin: {FORM_LINK}\n\n"
+                            f"Hoặc điền form đăng ký để nhận link affiliate và hoa hồng ngay!")
+                        log.info(f"New visitor {username or chat_id} — saved chat_id, sent form link")
 
         except Exception as e:
             log.error(f"Poll error: {e}")
