@@ -133,7 +133,39 @@ def sheets_append(tab, values):
         return False
 
 
+# --- Direct Q1/Q2 parser fallback (no LLM needed) ---
+def _parse_score_direct(q1, q2):
+    q1l = q1.lower()
+    if "1" in q1 and ("x" in q1l or "twitter" in q1l) or q1.strip() in ("1", "1️⃣") or "twitter" in q1l:
+        channel = "x"
+    elif "2" in q1 or "tiktok" in q1l:
+        channel = "tiktok"
+    elif "3" in q1 or "facebook" in q1l:
+        channel = "facebook"
+    elif "4" in q1 or ("telegram" in q1l and "mcm" not in q1l):
+        channel = "telegram"
+    elif "5" in q1 or "chưa" in q1l or "chua" in q1l or "không" in q1l:
+        channel = "none"
+    else:
+        channel = "none"
+
+    q2l = q2.lower()
+    high_goal = any(x in q2 for x in ["2", "3", "4", "$2,000", "$5,000", "2000", "5000"])
+    has_channel = channel != "none"
+
+    if has_channel and high_goal:
+        score, path = "Hot", "fast_track"
+    elif channel == "none" and not high_goal:
+        score, path = "Cold", "nurture"
+    else:
+        score, path = "Warm", "nurture"
+
+    return {"score": score, "path": path, "channel": channel}
+
+
 # --- LLM Scoring ---
+FALLBACK_MODELS = ["kr/claude-sonnet-4.5", "gemini/gemini-2.0-flash"]
+
 def score_lead(q1, q2):
     prompt_file = Path(__file__).parent.parent / "prompts" / "qualify.txt"
     score_template = ""
@@ -145,40 +177,42 @@ def score_lead(q1, q2):
 
     system_prompt = score_template.replace("{{q1_answer}}", q1).replace("{{q2_answer}}", q2)
 
-    data = json.dumps({
-        "model": MODEL,
-        "messages": [{"role": "user", "content": system_prompt}],
-        "max_tokens": 100
-    }).encode()
-    req = urllib.request.Request(f"{ROUTER_URL}/chat/completions", data=data)
-    req.add_header("Authorization", f"Bearer {ROUTER_KEY}")
-    req.add_header("Content-Type", "application/json")
+    for model in FALLBACK_MODELS:
+        data = json.dumps({
+            "model": model,
+            "messages": [{"role": "user", "content": system_prompt}],
+            "max_tokens": 100
+        }).encode()
+        req = urllib.request.Request(f"{ROUTER_URL}/chat/completions", data=data)
+        req.add_header("Authorization", f"Bearer {ROUTER_KEY}")
+        req.add_header("Content-Type", "application/json")
 
-    try:
-        resp = urllib.request.urlopen(req, timeout=20)
-        raw = resp.read().decode()
-        # Handle SSE streaming
-        if raw.startswith("data:"):
-            content = ""
-            for line in raw.split("\n"):
-                line = line.strip()
-                if line.startswith("data:") and line != "data: [DONE]":
-                    chunk = json.loads(line[5:].strip())
-                    delta = chunk.get("choices", [{}])[0].get("delta", {}).get("content", "")
-                    content += delta
-        else:
-            r = json.loads(raw)
-            content = r["choices"][0]["message"]["content"]
+        try:
+            resp = urllib.request.urlopen(req, timeout=20)
+            raw = resp.read().decode()
+            if raw.startswith("data:"):
+                content = ""
+                for line in raw.split("\n"):
+                    line = line.strip()
+                    if line.startswith("data:") and line != "data: [DONE]":
+                        chunk = json.loads(line[5:].strip())
+                        delta = chunk.get("choices", [{}])[0].get("delta", {}).get("content", "")
+                        content += delta
+            else:
+                r = json.loads(raw)
+                content = r["choices"][0]["message"]["content"]
 
-        # Extract JSON from content
-        start = content.find("{")
-        end = content.rfind("}") + 1
-        if start >= 0:
-            return json.loads(content[start:end])
-    except Exception as e:
-        log.error(f"score_lead error: {e}")
+            start = content.find("{")
+            end = content.rfind("}") + 1
+            if start >= 0:
+                result = json.loads(content[start:end])
+                log.info(f"Scored via {model}")
+                return result
+        except Exception as e:
+            log.error(f"score_lead error ({model}): {e}")
 
-    return {"score": "Warm", "path": "nurture", "channel": "none"}
+    log.warning("LLM scoring failed, using direct parser fallback")
+    return _parse_score_direct(q1, q2)
 
 
 # --- Prompt helpers ---
@@ -337,6 +371,16 @@ def telegram_poll_loop():
                     q1 = state.get("q1", "")
                     set_lead_state(username, {**state, "stage": "scoring"})
                     threading.Thread(target=finalize_lead, args=(username, q1, text), daemon=True).start()
+
+                elif stage == "done":
+                    # Existing affiliate — qualify done, agent2/3 handling them now
+                    tg_send(chat_id,
+                        f"Chào {name}! 👋\n\n"
+                        f"Bạn đã được ghi nhận vào hệ thống MCM Vendor.\n\n"
+                        f"📱 Lộ trình 7 ngày sẽ được gửi mỗi sáng.\n"
+                        f"📊 Checklist hàng ngày lúc 7AM.\n\n"
+                        f"Nếu cần hỗ trợ thêm, liên hệ admin: {FORM_LINK}")
+                    log.info(f"Existing affiliate {username} asked question, sent guidance")
 
                 else:
                     # New visitor — save chat_id, send form link (never bot intro)
