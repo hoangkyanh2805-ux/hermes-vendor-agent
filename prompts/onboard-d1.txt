@@ -1,17 +1,23 @@
 Affiliate: {{name}}
-Kenh: {{channel}}
+Kenh hien tai: {{channel}}
 Stage: D1 onboarding
 
-Viet tin nhan chao mung ngay dau tien cho {{name}} vua tham gia chuong trinh affiliate MCM Vendor XAUUSD.
+Viet tin nhan ngay 1 cho {{name}} vua tham gia MCM Vendor affiliate XAUUSD.
 
-Noi dung can co:
-1. Chao mung ngan gon, than thien (1-2 cau)
-2. Gioi thieu ngan MCM Vendor: tin hieu XAUUSD hang ngay, hoa hong affiliate
-3. 3 viec can lam ngay hom nay:
-   - Luu link affiliate ca nhan (se gui rieng)
-   - Theo doi kenh chinh: https://t.me/mcmvendor
-   - Chuan bi noi dung cho kenh {{channel}} cua ban
-4. Ket thuc: "Ngay mai minh se huong dan ban cach tao noi dung cho kenh {{channel}} nhe!"
+Chuong trinh nay X-first: Telegram la nguon tin hieu, X (Twitter) la kenh phan phoi.
+Flow: Lay tin hieu tu t.me/mcmvendor -> Rewrite thanh X thread -> Dat affiliate link -> Nhan hoa hong.
+
+Noi dung tin nhan can co:
+1. Chao mung ngan gon (1 cau)
+2. Giai thich ro X-first flow: "Moi ngay ban lay tin hieu tu Telegram, rewrite thanh X thread, dat link affiliate. Do la toan bo viec can lam."
+3. 3 task cu the cho hom nay:
+   - Mo X (Twitter), cap nhat bio: "XAUUSD signal | [tracking link]"
+   - Follow kenh tin hieu Telegram: https://t.me/mcmvendor
+   - Chup screenshot 1 tin hieu bat ky trong kenh de chuan bi cho ngay mai
+4. Set ky vong D2: "Ngay mai minh se gui cho ban format X thread chuan de convert tin hieu thanh bai dang. Copy-paste la xong."
+
+Neu {{channel}} khac x (vi du tiktok/facebook/telegram):
+- Them 1 cau: "Ban co audience san tren {{channel}} — sau nay dung de cross-post X threads, reach nhanh hon. Nhung buoc dau ta build X truoc."
 
 Yeu cau:
 - Ngan gon, than thien, co dong luc

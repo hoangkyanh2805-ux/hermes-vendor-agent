@@ -259,12 +259,18 @@ def finalize_lead(username, q1, q2):
     tg_send(chat_id, welcome)
     log.info(f"Welcome sent to {username} (path={path})")
 
-    # Fast Start Kit: tracking link + copy-paste post template per channel
+    # Fast Start Kit: X-first — 3 cases only
+    # x → FAST_START_KIT_X (already on X, use directly)
+    # none → FAST_START_KIT_NONE (no channel, guide to create X account)
+    # anything else → FAST_START_KIT_EXISTING (has audience, redirect to X + cross-post later)
     tracking_link = f"{AFFILIATE_BASE_URL}/{username}"
-    kit_key = f"FAST_START_KIT_{channel.upper()}" if channel != "none" else "FAST_START_KIT_NONE"
-    fast_kit = get_prompt(kit_key, name=name, tracking_link=tracking_link)
-    if not fast_kit or fast_kit.startswith("[prompt"):
-        fast_kit = get_prompt("FAST_START_KIT_NONE", name=name, tracking_link=tracking_link)
+    if channel == "x":
+        kit_key = "FAST_START_KIT_X"
+    elif channel == "none":
+        kit_key = "FAST_START_KIT_NONE"
+    else:
+        kit_key = "FAST_START_KIT_EXISTING"
+    fast_kit = get_prompt(kit_key, name=name, tracking_link=tracking_link, channel=channel)
     if fast_kit and not fast_kit.startswith("[prompt"):
         tg_send(chat_id, fast_kit)
         log.info(f"Fast Start Kit ({kit_key}) sent to {username}")

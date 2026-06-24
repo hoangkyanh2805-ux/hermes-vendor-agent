@@ -4,13 +4,15 @@ Chào {{name}}! Tôi là trợ lý AI của MCM Vendor 👋
 
 Để giúp bạn tốt nhất, cho tôi hỏi nhanh 2 câu nhé.
 
-**Câu 1:** Bạn đang có audience ở kênh nào?
+**Câu 1:** Bạn đang có audience ở đâu?
 
-1️⃣ TikTok
-2️⃣ Telegram
+1️⃣ X (Twitter)
+2️⃣ TikTok
 3️⃣ Facebook
-4️⃣ X (Twitter)
+4️⃣ Telegram group/channel
 5️⃣ Chưa có kênh nào
+
+MCM Vendor tập trung xây kênh X (Twitter) — nơi trader XAUUSD tập trung nhất. Dù bạn đang ở kênh nào, chúng ta sẽ bắt đầu từ X.
 
 Trả lời số hoặc tên kênh nhé!
 
@@ -35,19 +37,19 @@ Bạn là chuyên gia đánh giá affiliate cho chương trình MCM Vendor XAUUS
 
 Dựa trên 2 câu trả lời sau, hãy đánh giá affiliate này:
 
-Q1 (Kênh audience): {{q1_answer}}
+Q1 (Kênh audience hiện tại): {{q1_answer}}
 Q2 (Mục tiêu thu nhập): {{q2_answer}}
 
 Scoring rules:
-- Hot = có audience sẵn (TikTok/Telegram/Facebook/X) VÀ mục tiêu >= $2,000/tháng
+- Hot = có audience sẵn (bất kỳ kênh nào) VÀ mục tiêu >= $2,000/tháng
 - Warm = có kênh nhưng nhỏ HOẶC mục tiêu $500-$2,000 HOẶC chỉ đáp ứng 1 điều kiện Hot
 - Cold = chưa có kênh VÀ mục tiêu < $500
 
-Channel mapping:
-- TikTok / 1 → tiktok
-- Telegram / 2 → telegram
+Channel mapping (dùng để score và cross-post strategy):
+- X / Twitter / 1 → x
+- TikTok / 2 → tiktok
 - Facebook / 3 → facebook
-- X / Twitter / 4 → x
+- Telegram / 4 → telegram
 - Chưa có / 5 → none
 
 Path:
@@ -55,7 +57,7 @@ Path:
 - Warm / Cold → nurture
 
 Trả lời CHÍNH XÁC theo format JSON:
-{"score": "Hot|Warm|Cold", "path": "fast_track|nurture", "channel": "tiktok|telegram|facebook|x|none"}
+{"score": "Hot|Warm|Cold", "path": "fast_track|nurture", "channel": "x|tiktok|facebook|telegram|none"}
 
 ---
 
@@ -65,12 +67,10 @@ Trả lời CHÍNH XÁC theo format JSON:
 
 Tôi sẽ kết nối bạn với team ngay hôm nay để bắt đầu **Fast Track** — chương trình dành riêng cho affiliate có tiềm năng cao.
 
-Trong 24h tới bạn sẽ nhận được:
+Bạn sẽ nhận ngay:
 ✅ Link affiliate cá nhân
-✅ Bộ content XAUUSD ready-to-post
-✅ Hướng dẫn chi tiết theo kênh của bạn
-
-Chờ tin nhé! 🚀
+✅ Template X thread copy-paste đầu tiên
+✅ Lộ trình 7 ngày xây kênh X từ 0
 
 ---
 
@@ -78,13 +78,12 @@ Chờ tin nhé! 🚀
 
 Cảm ơn {{name}} đã quan tâm đến MCM Vendor! 😊
 
-Tôi đã ghi nhận thông tin của bạn. Trong 24h tới tôi sẽ gửi:
+Tôi đã ghi nhận thông tin của bạn.
 
-📚 Bộ tài liệu giới thiệu MCM Vendor
-💡 Hướng dẫn bắt đầu từ con số 0
-📊 Case study affiliate thành công
-
-Hãy để ý inbox nhé! Nếu có câu hỏi gì cứ nhắn tôi 🙌
+Bạn sẽ nhận ngay:
+📋 Link affiliate cá nhân
+📊 Template X thread đầu tiên để đăng ngay
+🗺️ Lộ trình 7 ngày xây kênh X từ 0
 
 ---
 
@@ -93,7 +92,7 @@ Hãy để ý inbox nhé! Nếu có câu hỏi gì cứ nhắn tôi 🙌
 🔗 Link affiliate của {{name}}: {{tracking_link}}
 Mọi người click link này = hoa hồng về cho bạn.
 
-📋 Copy tweet này và đăng ngay trên X:
+📋 Copy thread này và đăng ngay trên X:
 
 🔔 XAUUSD Signal — Gold đang vào vùng quan trọng hôm nay
 
@@ -102,64 +101,27 @@ Mình theo kênh signal này mỗi ngày, chuẩn xác và miễn phí:
 
 #xauusd #gold #trading #forex
 
-Chỉ cần paste lên X, đăng là xong.
-Hướng dẫn đầy đủ ngày 1 đến ngay sau đây 🚀
+Paste lên X, đăng là xong. Hướng dẫn ngày 1 đến ngay sau đây 🚀
 
 ---
 
-## FAST_START_KIT_TIKTOK
+## FAST_START_KIT_EXISTING
 
 🔗 Link affiliate của {{name}}: {{tracking_link}}
 Mọi người click link này = hoa hồng về cho bạn.
 
-📋 Script video 30 giây — quay ngay:
+MCM Vendor tập trung xây kênh X (Twitter). Bạn có audience sẵn trên {{channel}} — đó là lợi thế, dùng để drive traffic về X sau.
 
-Mở đầu: "Gold đang ở vùng rất đáng chú ý hôm nay..."
-Nội dung: Mở app chart, chỉ vào vùng giá đang test
-CTA: "Link tín hiệu miễn phí mình để trong bio"
-Caption: #xauusd #gold #trading #forex #vang
-Bio: Thêm {{tracking_link}} vào link bio TikTok
+📋 Copy thread này và đăng lên X ngay (tạo account nếu chưa có):
 
-Quay xong đăng ngay — không cần chỉnh nhiều.
-Hướng dẫn đầy đủ ngày 1 đến ngay sau đây 🚀
+🔔 XAUUSD Signal — Gold đang vào vùng quan trọng hôm nay
 
----
+Mình theo kênh signal này mỗi ngày, chuẩn xác và miễn phí:
+{{tracking_link}}
 
-## FAST_START_KIT_TELEGRAM
+#xauusd #gold #trading #forex
 
-🔗 Link affiliate của {{name}}: {{tracking_link}}
-Mọi người click link này = hoa hồng về cho bạn.
-
-📋 Forward tín hiệu vào group của bạn + thêm caption này:
-
-[Forward 1 tin từ t.me/mcmvendor]
-
-👆 Kênh tín hiệu XAUUSD mình đang theo — chuẩn và miễn phí.
-Ai muốn nhận signal hàng ngày: {{tracking_link}}
-
-Làm ngay, 2 phút là xong.
-Hướng dẫn đầy đủ ngày 1 đến ngay sau đây 🚀
-
----
-
-## FAST_START_KIT_FACEBOOK
-
-🔗 Link affiliate của {{name}}: {{tracking_link}}
-Mọi người click link này = hoa hồng về cho bạn.
-
-📋 Copy post này và đăng lên Facebook ngay:
-
-📈 Update XAUUSD hôm nay!
-
-Gold đang test vùng quan trọng — ai trade vàng thì chú ý nhé.
-
-Mình đang theo kênh signal này, chuẩn xác và hoàn toàn miễn phí:
-👉 {{tracking_link}}
-
-#xauusd #vàng #trading #đầutư
-
-Đăng xong tag mình để mình biết nhé!
-Hướng dẫn đầy đủ ngày 1 đến ngay sau đây 🚀
+Sau khi X account có engagement, cross-post về {{channel}} để reach audience cũ. Hướng dẫn ngày 1 đến ngay sau đây 🚀
 
 ---
 
@@ -168,10 +130,12 @@ Hướng dẫn đầy đủ ngày 1 đến ngay sau đây 🚀
 🔗 Link affiliate của {{name}}: {{tracking_link}}
 Đây là link cá nhân — ai click vào = hoa hồng về cho bạn.
 
+Bạn chưa có kênh — không sao, mình bắt đầu từ X (Twitter).
+
 3 việc làm ngay bây giờ:
 
-1️⃣ Join kênh tín hiệu: https://t.me/mcmvendor
-2️⃣ Lưu link trên vào đâu đó để dùng ngay
-3️⃣ Chia sẻ link này với 1 người bạn quan tâm đến gold/trading
+1️⃣ Tạo tài khoản X tại x.com — dùng tên thật hoặc brand name
+2️⃣ Bio: viết "XAUUSD signal | Trading" + paste {{tracking_link}}
+3️⃣ Follow kênh tín hiệu: https://t.me/mcmvendor để lấy content
 
-Hướng dẫn xây kênh từ đầu sẽ đến ngay sau đây 🚀
+Hướng dẫn đăng bài đầu tiên trên X sẽ đến ngay sau đây 🚀
