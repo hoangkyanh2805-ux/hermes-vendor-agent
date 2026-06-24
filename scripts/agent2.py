@@ -265,13 +265,26 @@ def run():
     log.info(f"Agent 2 done — sent {sent_count} messages")
 
 
+D1_FALLBACK = """Chào {name}! Mình là bot MCM Vendor 🤖
+
+MCM Vendor tập trung xây kênh X (Twitter).
+Flow: Lấy tín hiệu từ t.me/mcmvendor → Rewrite thành X thread → Đặt link affiliate → Nhận hoa hồng.
+
+3 việc làm ngay hôm nay:
+1️⃣ Mở X (Twitter), cập nhật bio: "XAUUSD signal | Trading"
+2️⃣ Follow kênh tín hiệu: https://t.me/mcmvendor
+3️⃣ Chụp 1 tín hiệu bất kỳ trong kênh để chuẩn bị cho ngày mai
+
+Ngày mai mình sẽ gửi format X thread copy-paste để convert tín hiệu thành bài đăng. Stick with it nhé!"""
+
+
 def run_immediate(username, chat_id, name, channel, score="Warm"):
     """Send D1 content now — called by agent1 right after qualify, bypassing the 8AM cron."""
     log.info(f"Immediate D1 for {username} ({channel})")
     content = generate_content(1, name, channel, score)
     if not content:
-        log.error(f"Failed to generate D1 content for {username}")
-        return
+        log.warning(f"LLM unavailable for D1 {username} — using fallback")
+        content = D1_FALLBACK.format(name=name)
 
     result = tg_send(chat_id, content)
     if not (result and result.get("ok")):
