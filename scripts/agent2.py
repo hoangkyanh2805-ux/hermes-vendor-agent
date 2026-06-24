@@ -144,35 +144,37 @@ Cu the cho kenh {channel}.
 Ngan gon, thiet thuc, co vi du thuc te.
 Ket thuc bang 1 cau khuyen khich hanh dong cu the."""
 
-    data = json.dumps({
-        "model": MODEL,
-        "messages": [{"role": "user", "content": prompt}],
-        "max_tokens": 600,
-        "stream": False,
-    }).encode()
-    req = urllib.request.Request(f"{ROUTER_URL}/chat/completions", data=data)
-    req.add_header("Authorization", f"Bearer {ROUTER_KEY}")
-    req.add_header("Content-Type", "application/json")
-    try:
-        resp = urllib.request.urlopen(req, timeout=30)
-        raw = resp.read().decode()
-        if raw.startswith("data:"):
-            content = ""
-            for line in raw.split("\n"):
-                line = line.strip()
-                if line.startswith("data:") and line != "data: [DONE]":
-                    try:
-                        chunk = json.loads(line[5:].strip())
-                        content += chunk.get("choices", [{}])[0].get("delta", {}).get("content", "")
-                    except Exception:
-                        pass
-            return content.strip()
-        else:
-            r = json.loads(raw)
-            return r["choices"][0]["message"]["content"].strip()
-    except Exception as e:
-        log.error(f"generate_content error: {e}")
-        return None
+    for model in ["kr/claude-sonnet-4.5", "gemini/gemini-2.0-flash"]:
+        data = json.dumps({
+            "model": model,
+            "messages": [{"role": "user", "content": prompt}],
+            "max_tokens": 600,
+            "stream": False,
+        }).encode()
+        req = urllib.request.Request(f"{ROUTER_URL}/chat/completions", data=data)
+        req.add_header("Authorization", f"Bearer {ROUTER_KEY}")
+        req.add_header("Content-Type", "application/json")
+        try:
+            resp = urllib.request.urlopen(req, timeout=30)
+            raw = resp.read().decode()
+            if raw.startswith("data:"):
+                content = ""
+                for line in raw.split("\n"):
+                    line = line.strip()
+                    if line.startswith("data:") and line != "data: [DONE]":
+                        try:
+                            chunk = json.loads(line[5:].strip())
+                            content += chunk.get("choices", [{}])[0].get("delta", {}).get("content", "")
+                        except Exception:
+                            pass
+                if content.strip():
+                    return content.strip()
+            else:
+                r = json.loads(raw)
+                return r["choices"][0]["message"]["content"].strip()
+        except Exception as e:
+            log.error(f"generate_content error ({model}): {e}")
+    return None
 
 
 # --- Main loop ---
