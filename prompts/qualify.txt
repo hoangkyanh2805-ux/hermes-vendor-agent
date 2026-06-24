@@ -93,16 +93,14 @@ Hãy để ý inbox nhé! Nếu có câu hỏi gì cứ nhắn tôi 🙌
 🔗 Link affiliate của {{name}}: {{tracking_link}}
 Mọi người click link này = hoa hồng về cho bạn.
 
-Copy tweet này và đăng ngay trên X:
+📋 Copy tweet này và đăng ngay trên X:
 
----
 🔔 XAUUSD Signal — Gold đang vào vùng quan trọng hôm nay
 
 Mình theo kênh signal này mỗi ngày, chuẩn xác và miễn phí:
 {{tracking_link}}
 
 #xauusd #gold #trading #forex
----
 
 Chỉ cần paste lên X, đăng là xong.
 Hướng dẫn đầy đủ ngày 1 đến ngay sau đây 🚀
@@ -114,15 +112,13 @@ Hướng dẫn đầy đủ ngày 1 đến ngay sau đây 🚀
 🔗 Link affiliate của {{name}}: {{tracking_link}}
 Mọi người click link này = hoa hồng về cho bạn.
 
-Script video 30 giây để quay ngay:
+📋 Script video 30 giây — quay ngay:
 
----
 Mở đầu: "Gold đang ở vùng rất đáng chú ý hôm nay..."
 Nội dung: Mở app chart, chỉ vào vùng giá đang test
 CTA: "Link tín hiệu miễn phí mình để trong bio"
 Caption: #xauusd #gold #trading #forex #vang
 Bio: Thêm {{tracking_link}} vào link bio TikTok
----
 
 Quay xong đăng ngay — không cần chỉnh nhiều.
 Hướng dẫn đầy đủ ngày 1 đến ngay sau đây 🚀
@@ -134,16 +130,14 @@ Hướng dẫn đầy đủ ngày 1 đến ngay sau đây 🚀
 🔗 Link affiliate của {{name}}: {{tracking_link}}
 Mọi người click link này = hoa hồng về cho bạn.
 
-Forward tín hiệu này vào group/channel của bạn và thêm caption:
+📋 Forward tín hiệu vào group của bạn + thêm caption này:
 
----
 [Forward 1 tin từ t.me/mcmvendor]
 
 👆 Kênh tín hiệu XAUUSD mình đang theo — chuẩn và miễn phí.
 Ai muốn nhận signal hàng ngày: {{tracking_link}}
----
 
-Làm ngay bây giờ, 2 phút là xong.
+Làm ngay, 2 phút là xong.
 Hướng dẫn đầy đủ ngày 1 đến ngay sau đây 🚀
 
 ---
@@ -153,9 +147,8 @@ Hướng dẫn đầy đủ ngày 1 đến ngay sau đây 🚀
 🔗 Link affiliate của {{name}}: {{tracking_link}}
 Mọi người click link này = hoa hồng về cho bạn.
 
-Copy post này và đăng lên Facebook ngay:
+📋 Copy post này và đăng lên Facebook ngay:
 
----
 📈 Update XAUUSD hôm nay!
 
 Gold đang test vùng quan trọng — ai trade vàng thì chú ý nhé.
@@ -164,7 +157,6 @@ Mình đang theo kênh signal này, chuẩn xác và hoàn toàn miễn phí:
 👉 {{tracking_link}}
 
 #xauusd #vàng #trading #đầutư
----
 
 Đăng xong tag mình để mình biết nhé!
 Hướng dẫn đầy đủ ngày 1 đến ngay sau đây 🚀
