@@ -1,0 +1,4 @@
+interface:
+  display_name: "Project Kickstart OS"
+  short_description: "Start new projects with docs, agents, rules, SOPs."
+  default_prompt: "Use project-kickstart-os to start this project from the idea, create a build-ready plan, folder structure, agent roles, rules, first sprint, and SOP ops runbook."
