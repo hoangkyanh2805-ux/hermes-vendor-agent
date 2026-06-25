@@ -1031,3 +1031,223 @@ Một agent muốn làm task phải tìm được:
 - điểm dừng
 
 MCM có thể dùng cấu trúc này để nhân bản sang ngành khác mà không viết lại từ đầu.
+
+---
+
+## 15. AI-Agent-Master: bộ xương thư mục cho AI làm việc như kiến trúc sư
+
+### 15.1 Ý chính
+
+Nếu Section 13 là **agent loop** và Section 14 là **folder structure tổng quát**, thì AI-Agent-Master là cách đóng gói thực dụng cho repo dùng Claude/Codex hằng ngày.
+
+Mục tiêu:
+
+```text
+Không để AI làm việc bằng prompt rời rạc.
+Đưa AI vào một bộ xương gồm agents, skills, commands, rules, references.
+```
+
+Khi có cấu trúc này, AI không cần được giải thích lại từ đầu mỗi lần. Nó biết vai trò nào xử lý việc gì, skill nào cần gọi, lệnh nào là entrypoint, luật nào không được phá, và tài liệu sâu nằm ở đâu.
+
+### 15.2 Năm thành phần chính
+
+| Thành phần | Vai trò | Ví dụ |
+|---|---|---|
+| `agents/` | Phân công vai trò rõ ràng | project-manager, ui-ux-designer, sales-strategist, infra-maintainer |
+| `skills/` | Đóng gói kinh nghiệm và workflow reusable | write-guard, plan, monitoring, payment, production incident, agent-os-designer |
+| `commands/` | Lệnh hằng ngày để gọi workflow nhanh | `/build`, `/spec`, `/review`, `/harden`, `/monitoring`, `/seo`, `/deploy` |
+| `rules/` | Luật toàn dự án không được phá | naming conventions, project structure, data write policy, permission matrix |
+| `references/` | Tài liệu sâu khi AI cần tra cứu | RBAC, auth flow, deploy workflow, Docker, payment integration, backup |
+
+### 15.3 Map với repo MCM hiện tại
+
+MCM đã có một phần AI-Agent-Master:
+
+| AI-Agent-Master | MCM hiện có | Review |
+|---|---|---|
+| `agents/` | `souls/`, `AGENTS.md`, `.agents/` | Có vai trò nhưng chưa đóng thành agent contract chuẩn |
+| `skills/` | `skills/agent1-agent5.yaml`, `.claude/skills/*`, `.codex/skills/agent-os-designer` | Đã có skill runtime và skill dev; nên tách rõ runtime skill vs Codex/Claude skill |
+| `commands/` | `.claude/commands/spec.md`, `review.md`, `doubt.md` | Mới có 3 command dev; thiếu command ops như `/deploy`, `/monitoring`, `/agent-os`, `/partner-growth` |
+| `rules/` | ADR files, `AGENTS.md`, deployment/error handling | Chưa có thư mục rules riêng cho permission, stop condition, naming, data policy |
+| `references/` | `docs/`, `knowledge/`, case-study HTML/MD | Có nhiều reference, nhưng cần index rõ để AI không đọc lạc |
+
+### 15.4 Cấu trúc đề xuất cho MCM
+
+Không cần đổi production ngay. Nên thêm một lớp AI operating layer, ưu tiên không phá deploy:
+
+```text
+.claude/
+  agents/
+    project-manager.md
+    growth-ops-architect.md
+    partner-sales-strategist.md
+    ai-agent-architect.md
+  skills/
+    spec-driven-development/
+    code-review-and-quality/
+    doubt-driven-development/
+  commands/
+    spec.md
+    review.md
+    doubt.md
+    agent-os.md
+    partner-growth.md
+
+.codex/
+  skills/
+    agent-os-designer/
+
+.ai/
+  agents/
+    agent1-capture.md
+    agent2-onboard.md
+    agent3-daily-loop.md
+    agent4-crm-sync.md
+    agent5-monitor.md
+  rules/
+    permission-matrix.md
+    stop-conditions.md
+    human-approval-gates.md
+    data-write-policy.md
+  references/
+    mcm-partner-growth-os.md
+    zeremai-case-study-map.md
+    agency-agents-map.md
+  actions/
+    lead-capture-flow.md
+    onboarding-d1-d7-flow.md
+    daily-coaching-flow.md
+    crm-sync-flow.md
+    payout-rank-flow.md
+  audit/
+    sop-audit-checklist.md
+    qa-evidence-template.md
+```
+
+### 15.5 Agents: phân vai thay vì một AI làm tất cả
+
+MCM nên có hai lớp agent:
+
+1. **Runtime agents**: Agent1-5 đang chạy thật trong production.
+2. **Design/advisory agents**: các vai giúp thiết kế, review, audit, sales, ops.
+
+Ví dụ design/advisory agents:
+
+| Agent | Vai trò |
+|---|---|
+| `ai-agent-architect` | Thiết kế agent loop, permission, stop condition |
+| `growth-ops-architect` | Map MCM thành Partner Growth OS |
+| `partner-sales-strategist` | Viết offer, pricing, sales narrative |
+| `ops-auditor` | Review daily/weekly/monthly cadence |
+| `infra-maintainer` | Review deploy, monitoring, backup, incident |
+
+### 15.6 Skills: đóng gói kinh nghiệm reusable
+
+Skill không phải prompt dài. Skill là một folder có `SKILL.md` và reference đi kèm.
+
+Skill `agent-os-designer` vừa tạo nên là asset dùng lại cho nhiều dự án:
+
+```text
+.codex/skills/agent-os-designer/
+  SKILL.md
+  references/
+    agent-contract-template.md
+    folder-structure-template.md
+    permission-matrix-template.md
+    stop-condition-template.md
+    project-audit-checklist.md
+```
+
+Cách gọi ở repo khác:
+
+```text
+Use $agent-os-designer to audit this repo and create an agent operating model.
+```
+
+### 15.7 Commands: entrypoint cho công việc hằng ngày
+
+Commands giúp người dùng không phải nhớ prompt dài.
+
+MCM hiện có:
+
+```text
+/spec
+/review
+/doubt
+```
+
+Nên bổ sung sau này:
+
+| Command | Mục đích |
+|---|---|
+| `/agent-os` | Audit repo theo Goal -> Loop -> Tool -> Check -> Stop -> Approval |
+| `/partner-growth` | Tạo offer/sales kit/industry template cho Hermes Partner Growth OS |
+| `/monitoring` | Review health check, alert, quota, cron, service |
+| `/deploy` | Checklist deploy + rollback |
+| `/sop-audit` | Review SOP/playbook có đủ owner, cadence, output, metric chưa |
+
+### 15.8 Rules: luật chung cho toàn dự án
+
+Rules là phần AI không được phá, dù task nào.
+
+MCM nên có các rule docs:
+
+```text
+.ai/rules/permission-matrix.md
+.ai/rules/stop-conditions.md
+.ai/rules/human-approval-gates.md
+.ai/rules/data-write-policy.md
+.ai/rules/naming-conventions.md
+.ai/rules/project-structure.md
+```
+
+Các rule quan trọng:
+
+- Không xóa row/data production nếu chưa có approval.
+- Không sửa payout/commission nếu chưa có evidence và admin duyệt.
+- Không mass broadcast nếu chưa có preview và approval.
+- Không thêm CRM/tool mới nếu chưa có delete-first/resource-fit review.
+- Lỗi lặp 3 lần phải dừng và escalate.
+
+### 15.9 References: thư viện sâu cho AI
+
+References là nơi chứa tài liệu dài, chỉ đọc khi cần.
+
+MCM hiện có:
+
+- `docs/mcm-partner-growth-os-tech-review.md`
+- `docs/repo-audit.md`
+- `docs/case-study-mapping.md`
+- `knowledge/VENDOR-GROWTH-PLAN.md`
+- `playbook/vendor-package/*`
+- HTML/MD case studies
+
+Cần thêm index sau này:
+
+```text
+.ai/references/INDEX.md
+```
+
+Index nên trả lời:
+
+- muốn hiểu Partner Growth OS đọc file nào
+- muốn hiểu deploy đọc file nào
+- muốn hiểu vendor ops đọc file nào
+- muốn hiểu case study ZeremAI đọc file nào
+- muốn hiểu rule/permission đọc file nào
+
+### 15.10 Kết luận
+
+AI-Agent-Master không phải chỉ là thư mục `.claude`. Nó là hệ thống tổ chức để AI làm việc có vai trò, kỹ năng, lệnh, luật và tài liệu tham khảo.
+
+MCM nên dùng mô hình này để biến dự án từ:
+
+```text
+một hệ 5 agents chạy production
+```
+
+thành:
+
+```text
+một AI-operable business system có thể clone, audit, bán lại và nhân bản sang ngành khác
+```
