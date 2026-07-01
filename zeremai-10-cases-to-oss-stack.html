@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZeremAI 10 Case Studies → OSS / Hermes Stack</title>
+<style>
+  :root{
+    --bg:#0d1117;--panel:#161b22;--panel2:#1c2430;--line:#2d3645;
+    --txt:#e6edf3;--muted:#9aa7b4;--gold:#d4af37;--green:#3fb950;
+    --red:#f85149;--blue:#58a6ff;--purple:#bc8cff;--pill:#21262d;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;line-height:1.55;font-size:14.5px}
+  .wrap{max-width:1140px;margin:0 auto;padding:30px 20px 80px}
+  header.hero{border:1px solid var(--line);border-radius:16px;
+    background:linear-gradient(135deg,#161b22,#11161d);padding:28px 26px;margin-bottom:24px}
+  .kicker{color:var(--gold);font-weight:700;letter-spacing:.12em;text-transform:uppercase;font-size:11.5px}
+  h1{margin:6px 0 4px;font-size:25px;line-height:1.25}
+  h1 small{color:var(--muted);font-weight:500;font-size:14px;display:block;margin-top:6px}
+  h2{font-size:18px;margin:34px 0 10px;border-left:4px solid var(--gold);padding-left:11px}
+  h3{font-size:15px;margin:4px 0 2px}
+  p{margin:7px 0}
+  .muted{color:var(--muted)}
+  table{width:100%;border-collapse:collapse;margin:10px 0;font-size:12.8px}
+  th,td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top}
+  th{background:var(--panel2);color:var(--gold);font-size:11px;text-transform:uppercase;letter-spacing:.03em}
+  tr:nth-child(even) td{background:#12171f}
+  a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}
+  .case{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:18px 20px;margin:16px 0}
+  .case .top{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;border-bottom:1px solid var(--line);padding-bottom:8px;margin-bottom:10px}
+  .case .num{color:var(--gold);font-weight:800;font-size:22px;margin-right:8px}
+  .tag{display:inline-block;background:var(--pill);border:1px solid var(--line);border-radius:999px;padding:1px 9px;font-size:11px;margin:2px 3px 2px 0;color:var(--muted)}
+  .stats{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+  .stat{background:#0b0f14;border:1px solid var(--line);border-radius:9px;padding:7px 11px;min-width:96px}
+  .stat .n{font-size:18px;font-weight:800;color:var(--gold);line-height:1.1}
+  .stat .l{font-size:10.5px;color:var(--muted)}
+  .keep{color:var(--green);font-weight:700}.del{color:var(--red);font-weight:700}.light{color:var(--gold);font-weight:700}
+  .mech{background:#16110a;border:1px solid #5a4a1f;border-radius:9px;padding:9px 12px;font-size:12.5px;margin:8px 0}
+  .save{background:linear-gradient(135deg,#0f2417,#0d1117);border:1px solid #1f5132;border-radius:12px;padding:16px 18px;margin:14px 0}
+  .save .big{font-size:28px;font-weight:800;color:var(--green)}
+  ul{margin:6px 0 6px 0;padding-left:18px}li{margin:3px 0}
+  .note{font-size:11.8px;color:var(--muted);font-style:italic}
+  .toc{columns:2;font-size:13px}@media(max-width:640px){.toc{columns:1}}
+  footer{margin-top:46px;border-top:1px solid var(--line);padding-top:14px;color:var(--muted);font-size:11.5px}
+  .legend span{margin-right:14px;font-size:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <div class="kicker">Case Study → Stack → Plan · /case-study-to-stack</div>
+  <h1>ZeremAI — 10 Case Studies → OSS / Hermes Stack
+    <small>Phân tích first-principles toàn bộ case study của zerem.ai · Map paid stack → OSS đã verify (stars + license, 06/2026) · Đối chiếu mức phù hợp dự án Hermes/MCM Vendor</small></h1>
+  <div class="legend" style="margin-top:10px">
+    <span class="keep">● GIỮ</span><span class="del">● XÓA (delete-first)</span><span class="light">● GIỮ NHẸ</span>
+  </div>
+</header>
+
+<h2>Tóm tắt điều hành</h2>
+<p>ZeremAI bán cùng <b>một công thức</b> cho mọi ngành: <b>CRM/board (Monday/Attio/HubSpot/HighLevel) + automation (Zapier/Make) + AI personalization + dashboard realtime + nhịp họp KPI</b> — giá <b>$5,000–15,000/tháng retainer</b>. Tiền thật nằm ở retainer agency chứ không ở SaaS (~$150–600/mo). Toàn bộ công thức này tái lập được bằng OSS self-host trên VPS với chi phí <b>~$50–150/tháng</b> — và dự án Hermes/MCM của bạn đã có sẵn ~90% mảnh ghép lõi.</p>
+
+<div class="save">
+  <div class="kicker" style="color:var(--green)">Saving tổng (mọi case)</div>
+  <div style="display:flex;gap:24px;flex-wrap:wrap;margin-top:6px;align-items:baseline">
+    <div><div class="muted">Retainer ZeremAI</div><div class="big" style="color:var(--gold)">$5k–15k/mo</div></div>
+    <div><div class="muted">Stack OSS Hermes</div><div class="big">~$50–150/mo</div></div>
+    <div><div class="muted">Tiết kiệm</div><div class="big">97–99%</div></div>
+  </div>
+</div>
+
+<p class="muted"><b>Mục lục 10 case:</b></p>
+<div class="toc muted">
+1. Landhold — BĐS London<br>
+2. Studio B — Agency nội dung social<br>
+3. Algo First — Network AI / B2B outbound<br>
+4. One Golden Thread — Thời trang tái tạo + gọi vốn<br>
+5. Entrepreneurs Organization — Chương trình đào tạo/chapter<br>
+6. Paxwell — Đầu tư đất<br>
+7. Vine Ventures — Quỹ đầu tư mạo hiểm<br>
+8. The Armada — Membership cao cấp<br>
+9. F&B Insights — Nền tảng data nhà hàng<br>
+10. Geoship — Sản xuất nhà bioceramic + crowdfunding
+</div>
+
+<!-- ===== MASTER MAP ===== -->
+<h2>Bảng tổng: Tool trả phí lặp lại → OSS (đã verify)</h2>
+<table>
+  <tr><th>Tool trả phí</th><th>Xuất hiện ở case</th><th>Chức năng</th><th>OSS thay thế (stars · license)</th><th>Hợp Hermes?</th></tr>
+  <tr><td>Monday.com / Attio</td><td>1,2,5,7,8 / 3</td><td>CRM pipeline + board + dashboard</td><td><a href="https://github.com/twentyhq/twenty">Twenty</a> 50.5K·AGPL / <a href="https://github.com/makeplane/plane">Plane</a> 52.6K·AGPL / EspoCRM 7.8K·AGPL</td><td class="keep">Đã có EspoCRM</td></tr>
+  <tr><td>Zapier / Make.com</td><td>1,2,3,4,7,8,9 / 6</td><td>Automation bridge</td><td><a href="https://github.com/n8n-io/n8n">n8n</a> 193K·fair-code / <a href="https://github.com/activepieces/activepieces">Activepieces</a> 22K·MIT</td><td class="keep">Hermes webhook+cron</td></tr>
+  <tr><td>Clay</td><td>3,4</td><td>Enrichment waterfall</td><td>n8n + Postgres + free API (~85% rẻ hơn)</td><td class="light">Giữ nhẹ (Claude)</td></tr>
+  <tr><td>HubSpot</td><td>4,5,7,9,10</td><td>CRM + marketing automation</td><td>Twenty + <a href="https://github.com/mautic/mautic">Mautic</a> 9.5K·GPL + n8n</td><td class="keep">Đã có CRM</td></tr>
+  <tr><td>Klaviyo / Mailchimp</td><td>4 / 8,9</td><td>Email marketing</td><td><a href="https://github.com/knadh/listmonk">Listmonk</a> 12.1K·AGPL / Mautic 9.5K</td><td class="del">Telegram-first</td></tr>
+  <tr><td>QuickBooks / Bill.com</td><td>7,8,9</td><td>Kế toán + hoá đơn</td><td><a href="https://github.com/akaunting/akaunting">Akaunting</a> / <a href="https://github.com/invoiceninja/invoiceninja">Invoice Ninja</a> / ERPNext</td><td class="light">Khi cần kế toán</td></tr>
+  <tr><td>DocuSign / SignNow</td><td>3 / 6</td><td>Ký hợp đồng điện tử</td><td><a href="https://github.com/docusealco/docuseal">Docuseal</a> 11.8K·AGPL / <a href="https://github.com/documenso/documenso">Documenso</a> 12.7K·AGPL</td><td class="light">Khi bán Bundle</td></tr>
+  <tr><td>Slack</td><td>2,8</td><td>Team chat</td><td>Mattermost 36.8K / Rocket.Chat 45.3K</td><td class="del">Telegram thay</td></tr>
+  <tr><td>Twilio</td><td>1,8</td><td>SMS</td><td>Telegram Bot API / Fonoster 6K</td><td class="del">Telegram thay</td></tr>
+  <tr><td>Fireflies.ai</td><td>2</td><td>Transcribe họp → action item</td><td><a href="https://github.com/Zackriya-Solutions/meetily">Meetily</a> MIT / Whisper MIT</td><td class="light">Optional</td></tr>
+  <tr><td>Notion</td><td>10</td><td>Wiki / knowledge base</td><td><a href="https://github.com/AppFlowy-IO/AppFlowy">AppFlowy</a> 72.8K·AGPL</td><td class="light">Optional</td></tr>
+  <tr><td>ManyChat</td><td>8</td><td>Chatbot marketing</td><td><a href="https://typebot.io">Typebot</a> / Botpress</td><td class="del">Hermes+Telegram</td></tr>
+  <tr><td>Shopify</td><td>4</td><td>E-commerce</td><td><a href="https://github.com/medusajs/medusa">Medusa</a> 34K·MIT</td><td class="del">Không bán hàng</td></tr>
+  <tr><td>Snowflake</td><td>7</td><td>Data warehouse</td><td>PostgreSQL / ClickHouse / DuckDB</td><td class="light">Khi data lớn</td></tr>
+  <tr><td>Monday/HubSpot Dashboard</td><td>tất cả</td><td>BI dashboard realtime</td><td><a href="https://github.com/metabase/metabase">Metabase</a> 47.8K·AGPL / Superset 73.5K·Apache</td><td class="keep">Artifact→Metabase</td></tr>
+  <tr><td>Copilot / OpenAI</td><td>1 / 6</td><td>AI sinh nội dung</td><td>Claude API + <a href="https://github.com/NousResearch/hermes-agent">Hermes Agent</a> ~190K</td><td class="keep">Lõi của MCM</td></tr>
+  <tr><td>GoHighLevel</td><td>6</td><td>All-in-one CRM+chatbot+automation</td><td>Tổ hợp: Twenty + n8n + Typebot + Telegram</td><td class="keep">Tổ hợp Hermes</td></tr>
+  <tr><td>Carta / Ramp / LandInsight / PeopleVine / AngelList / Wefunder</td><td>7/10/6/8/10</td><td>Niche (cap table, thẻ chi tiêu, GIS đất, membership, crowdfunding)</td><td>Không có OSS sạch — giữ SaaS hoặc bỏ tuỳ ngành</td><td class="del">Không liên quan MCM</td></tr>
+</table>
+<p class="note">Stars/license tham khảo 06/2026, có thể đổi. Lưu ý license khi đóng gói bán: AGPL buộc mở source nếu cung cấp qua mạng; n8n fair-code cấm thương mại hoá lại; MIT/Apache (Medusa, Activepieces-CE, Superset, Meetily, last30days) thoáng nhất.</p>
+
+<!-- ===== CASE 1 ===== -->
+<div class="case">
+  <div class="top"><div><span class="num">1</span><b>Landhold</b> — Phát triển BĐS, London</div>
+    <div><span class="tag">Marketing</span><span class="tag">Acquisitions</span><span class="tag">Sales</span></div></div>
+  <p class="muted">Công ty BĐS 30 năm, 270+ tài sản, deal £5m–£23m. Vấn đề: thiếu deal flow, mất "top of mind", quy trình tay, team burn out.</p>
+  <div class="stats">
+    <div class="stat"><div class="n">+300%</div><div class="l">response outreach</div></div>
+    <div class="stat"><div class="n">+2</div><div class="l">acquisition/6 tháng</div></div>
+    <div class="stat"><div class="n">35%</div><div class="l">tăng hiệu suất</div></div>
+    <div class="stat"><div class="n">120</div><div class="l">ngày NS/năm</div></div>
+  </div>
+  <div class="mech"><b>Cơ chế +300%:</b> không phải AI viết hay — mà contact chia <b>8 nhóm</b> + email personalize bằng data enrich + <b>status trigger</b> đúng lúc. → MCM: personalize Telegram theo channel+path, trigger theo status.</div>
+  <table>
+    <tr><th>Tool gốc</th><th>Chức năng</th><th>OSS / Hermes</th><th>Quyết định</th></tr>
+    <tr><td>Apollo.io</td><td>Prospecting + enrich</td><td>Claude API (enrich nhẹ)</td><td class="del">Xóa prospecting</td></tr>
+    <tr><td>Monday.com</td><td>Pipeline 6 stage + 46 automation + dashboard</td><td>EspoCRM/Twenty + n8n</td><td class="keep">Giữ — đã có</td></tr>
+    <tr><td>Microsoft Copilot</td><td>Personalized email/SMS (động cơ +300%)</td><td>Claude API + Hermes</td><td class="keep">Giữ — quan trọng nhất</td></tr>
+    <tr><td>Outlook + Twilio</td><td>Kênh email + SMS</td><td>Telegram Bot</td><td class="del">Xóa cả hai</td></tr>
+    <tr><td>Zapier</td><td>Bridge automation</td><td>Hermes webhook+cron</td><td class="del">Xóa</td></tr>
+  </table>
+</div>
+
+<!-- ===== CASE 2 ===== -->
+<div class="case">
+  <div class="top"><div><span class="num">2</span><b>Studio B</b> — Agency nội dung social (23M followers)</div>
+    <div><span class="tag">Sales</span><span class="tag">Operations/PM</span><span class="tag">HR</span></div></div>
+  <p class="muted">Agency sản xuất nội dung (khách Netflix/Disney/Google). Vấn đề: không có single source of truth, forecast tay, follow-up bị bỏ lỡ, pipeline production mù.</p>
+  <div class="stats">
+    <div class="stat"><div class="n">£1.61M</div><div class="l">doanh thu mới</div></div>
+    <div class="stat"><div class="n">31</div><div class="l">cơ hội/90 ngày</div></div>
+    <div class="stat"><div class="n">100%</div><div class="l">capture action item</div></div>
+    <div class="stat"><div class="n">73%</div><div class="l">SOP adherence</div></div>
+  </div>
+  <div class="mech"><b>Cơ chế £1.61M:</b> "Last Status Change" tracking + <b>email-open notify</b> → không lead nằm chết, follow-up đúng lúc. → MCM: Agent3 coaching khi inactive/drop. <b>Gần mô hình content→lead của bạn nhất.</b></div>
+  <table>
+    <tr><th>Tool gốc</th><th>Chức năng</th><th>OSS / Hermes</th><th>Quyết định</th></tr>
+    <tr><td>Monday.com</td><td>Lead board + production board + dashboard</td><td>EspoCRM/Twenty + Metabase</td><td class="keep">Giữ</td></tr>
+    <tr><td>Zapier</td><td>Automation Gmail↔Monday</td><td>n8n / Hermes cron</td><td class="keep">Giữ</td></tr>
+    <tr><td>Google Workspace</td><td>Gmail + Sheets</td><td>Telegram + Google Sheet</td><td class="del">Xóa Gmail, giữ Sheet</td></tr>
+    <tr><td>Fireflies.ai</td><td>Transcribe họp → action item + owner</td><td>Meetily / Whisper</td><td class="light">Optional (team 2 người)</td></tr>
+    <tr><td>Slack</td><td>Handover team</td><td>Telegram group</td><td class="del">Xóa</td></tr>
+    <tr><td>(Social Performance Tracker)</td><td>Đo content nào thắng</td><td>last30days-skill + tracker Sheet</td><td class="keep">GAP — nên build</td></tr>
+  </table>
+</div>
+
+<!-- ===== CASE 3 ===== -->
+<div class="case">
+  <div class="top"><div><span class="num">3</span><b>Algo First</b> — Network AI professionals (B2B outbound)</div>
+    <div><span class="tag">Marketing</span><span class="tag">Sales</span></div></div>
+  <p class="muted">Muốn scale từ prospecting tay sang cỗ máy sales tự động, săn CEO/CMO/CTO. <b>Đây là blueprint cho việc BÁN SOP Bundle của bạn, không phải hệ affiliate.</b></p>
+  <div class="stats">
+    <div class="stat"><div class="n">7.2x</div><div class="l">revenue velocity</div></div>
+    <div class="stat"><div class="n">60%</div><div class="l">giảm sales cycle</div></div>
+    <div class="stat"><div class="n">100%</div><div class="l">tăng productivity</div></div>
+    <div class="stat"><div class="n">24/7</div><div class="l">lead gen tự động</div></div>
+  </div>
+  <div class="mech"><b>Cơ chế 7.2x:</b> Clay→Attio→DocuSign auto qua Zapier: lead in → enrich → nhắn theo stage → hợp đồng out, không chạm tay. <b>Stalled-deal indicator</b> giảm 60% cycle.</div>
+  <table>
+    <tr><th>Tool gốc</th><th>Chức năng</th><th>OSS / Hermes</th><th>Quyết định (bán Bundle)</th></tr>
+    <tr><td>Apollo.io</td><td>Prospecting decision-maker</td><td>Apify/Telethon</td><td class="light">Giữ khi bán Bundle</td></tr>
+    <tr><td>Clay</td><td>Enrichment waterfall</td><td>n8n + Postgres</td><td class="light">n8n waterfall</td></tr>
+    <tr><td>Attio</td><td>CRM quan hệ + Kanban</td><td>Twenty 50.5K</td><td class="keep">Đã có</td></tr>
+    <tr><td>Zapier</td><td>Bridge + Python</td><td>n8n</td><td class="keep">Giữ</td></tr>
+    <tr><td>DocuSign</td><td>Ký hợp đồng</td><td>Docuseal 11.8K</td><td class="keep">Cần khi bán Bundle</td></tr>
+    <tr><td>Google Drive</td><td>Lưu file hợp đồng</td><td>Drive / Nextcloud</td><td class="keep">Giữ</td></tr>
+  </table>
+</div>
+
+<!-- ===== CASE 4 ===== -->
+<div class="case">
+  <div class="top"><div><span class="num">4</span><b>One Golden Thread</b> — Thời trang tái tạo + gọi vốn</div>
+    <div><span class="tag">Sales</span><span class="tag">Investment</span></div></div>
+  <p class="muted">Brand thời trang eco, scale outreach cho consumer + affiliate + investor. <b>Có lớp "affiliate outreach" — gần MCM.</b></p>
+  <div class="stats">
+    <div class="stat"><div class="n">500%</div><div class="l">lead velocity</div></div>
+    <div class="stat"><div class="n">5x</div><div class="l">ID buyer cao cấp (AI scoring)</div></div>
+    <div class="stat"><div class="n">22%</div><div class="l">returning customer</div></div>
+    <div class="stat"><div class="n">60%</div><div class="l">giảm giờ admin</div></div>
+  </div>
+  <div class="mech"><b>Cơ chế 5x:</b> AI Lead Scoring phân luồng investor (Pre-Seed vs crowdfunding) + enrich Clay → ưu tiên đúng lead giá trị cao. → MCM: chính là scoring Hot/Warm/Cold đã có.</div>
+  <table>
+    <tr><th>Tool gốc</th><th>Chức năng</th><th>OSS / Hermes</th><th>Quyết định</th></tr>
+    <tr><td>Shopify</td><td>E-commerce</td><td>Medusa 34K</td><td class="del">Không bán hàng</td></tr>
+    <tr><td>Claude AI</td><td>AI engine</td><td>Claude API</td><td class="keep">Đã có</td></tr>
+    <tr><td>Clay</td><td>Enrich contact</td><td>n8n + Claude</td><td class="light">Giữ nhẹ</td></tr>
+    <tr><td>HubSpot</td><td>Lead scoring + CRM</td><td>Twenty + Claude scoring</td><td class="keep">Đã có (Agent1)</td></tr>
+    <tr><td>Zapier</td><td>Bridge 4 platform</td><td>n8n</td><td class="keep">Giữ</td></tr>
+    <tr><td>Klaviyo</td><td>Email marketing</td><td>Listmonk / Mautic</td><td class="del">Telegram thay</td></tr>
+  </table>
+</div>
+
+<!-- ===== CASE 5 ===== -->
+<div class="case">
+  <div class="top"><div><span class="num">5</span><b>Entrepreneurs Organization</b> — Chương trình đào tạo founder (20K+ members)</div>
+    <div><span class="tag">Chapter Ops</span><span class="tag">Sales/CRM</span></div></div>
+  <p class="muted">EO Accelerator — chuẩn hoá vận hành chapter thành 1 template lifecycle lặp lại. <b>Rất giống mục tiêu "đóng gói SOP Bundle bán lại" của bạn.</b></p>
+  <div class="stats">
+    <div class="stat"><div class="n">4x</div><div class="l">deploy chapter mới</div></div>
+    <div class="stat"><div class="n">60%</div><div class="l">giảm onboarding staff</div></div>
+    <div class="stat"><div class="n">40%</div><div class="l">tăng check-in coaching</div></div>
+    <div class="stat"><div class="n">20h</div><div class="l">admin/chapter/tháng</div></div>
+  </div>
+  <div class="mech"><b>Cơ chế 4x:</b> 1 board map mọi stage (Recruit→Budget→Lead→Onboard→Graduate) + instruction library nhúng + role-based view → onboard staff mới không cần training tay. <b>Đây chính là mô hình "SOP template adapt cho ngành khác" trong CLAUDE.md.</b></div>
+  <table>
+    <tr><th>Tool gốc</th><th>Chức năng</th><th>OSS / Hermes</th><th>Quyết định</th></tr>
+    <tr><td>Monday.com</td><td>Participant lifecycle board + health tracker</td><td>EspoCRM/Twenty</td><td class="keep">Đã có</td></tr>
+    <tr><td>HubSpot</td><td>Playbook + email lifecycle (6 nhóm, A/B)</td><td>Mautic + n8n</td><td class="keep">Giữ (Agent2 D1-D7)</td></tr>
+    <tr><td>Google Workspace</td><td>Docs/Sheets template library</td><td>Google Sheet / AppFlowy</td><td class="keep">Giữ</td></tr>
+    <tr><td>Microsoft 365</td><td>Excel parity</td><td>—</td><td class="del">Trùng, bỏ</td></tr>
+  </table>
+</div>
+
+<!-- ===== CASE 6 ===== -->
+<div class="case">
+  <div class="top"><div><span class="num">6</span><b>Paxwell</b> — Đầu tư đất (80+ giao dịch/2 năm)</div>
+    <div><span class="tag">Marketing</span><span class="tag">Acquisitions</span><span class="tag">Sales</span></div></div>
+  <p class="muted">Mua đất "không mong muốn", muốn gấp đôi acquisition. Dùng <b>GoHighLevel all-in-one</b> thay vì ghép nhiều tool.</p>
+  <div class="stats">
+    <div class="stat"><div class="n">45 giây</div><div class="l">due diligence (từ 5h)</div></div>
+    <div class="stat"><div class="n">+105%</div><div class="l">velocity (7 deal/tháng)</div></div>
+    <div class="stat"><div class="n">80%</div><div class="l">giảm offer sai</div></div>
+    <div class="stat"><div class="n">54%</div><div class="l">giảm CPA</div></div>
+  </div>
+  <div class="mech"><b>Cơ chế 45 giây:</b> Make.com + OpenAI auto research (zoning, lien, slope) thay 5h tay; <b>GHL chatbot 24/7</b> qualify lead tức thì (speed-to-lead). → MCM: Agent1 SLA &lt;30s + chatbot Telegram qualify.</div>
+  <table>
+    <tr><th>Tool gốc</th><th>Chức năng</th><th>OSS / Hermes</th><th>Quyết định</th></tr>
+    <tr><td>GoHighLevel</td><td>All-in-one CRM+chatbot+automation</td><td>Twenty + n8n + Typebot + Telegram</td><td class="keep">Tổ hợp Hermes</td></tr>
+    <tr><td>Make.com</td><td>Automation due diligence</td><td>n8n</td><td class="keep">Giữ</td></tr>
+    <tr><td>SignNow</td><td>Ký hợp đồng</td><td>Docuseal</td><td class="light">Khi bán Bundle</td></tr>
+    <tr><td>OpenAI</td><td>AI research property</td><td>Claude API</td><td class="keep">Đã có</td></tr>
+    <tr><td>LandInsight</td><td>GIS đất (niche)</td><td>Không có OSS sạch</td><td class="del">Không liên quan MCM</td></tr>
+    <tr><td>Wix / Rocket</td><td>Website / tooling</td><td>WordPress / static</td><td class="del">Không cần</td></tr>
+  </table>
+</div>
+
+<!-- ===== CASE 7 ===== -->
+<div class="case">
+  <div class="top"><div><span class="num">7</span><b>Vine Ventures</b> — Quỹ đầu tư mạo hiểm (8 funds)</div>
+    <div><span class="tag">Finance</span><span class="tag">Investment</span></div></div>
+  <p class="muted">VC firm — minh bạch tài chính realtime, bỏ nhập liệu tay. <b>Case thiên về Finance — ít liên quan affiliate ops, nhưng hữu ích nếu bạn quản tài chính Bundle.</b></p>
+  <div class="stats">
+    <div class="stat"><div class="n">50%</div><div class="l">giảm reporting quý</div></div>
+    <div class="stat"><div class="n">75%</div><div class="l">nhanh hơn xử lý hoá đơn</div></div>
+    <div class="stat"><div class="n">80</div><div class="l">ngày NS/năm</div></div>
+    <div class="stat"><div class="n">28</div><div class="l">automation, -90% lỗi</div></div>
+  </div>
+  <div class="mech"><b>Cơ chế:</b> Snowflake+QuickBooks hợp nhất 1 nguồn data + anomaly detection (flag chi &gt;$10K) + dashboard realtime → leadership thấy "vì sao" tức thì.</div>
+  <table>
+    <tr><th>Tool gốc</th><th>Chức năng</th><th>OSS / Hermes</th><th>Quyết định</th></tr>
+    <tr><td>QuickBooks</td><td>Kế toán</td><td>Akaunting / ERPNext</td><td class="light">Khi cần kế toán</td></tr>
+    <tr><td>Bill.com</td><td>Hoá đơn / AP</td><td>Invoice Ninja</td><td class="light">Optional</td></tr>
+    <tr><td>Monday + HubSpot</td><td>Board + CRM</td><td>Twenty/EspoCRM</td><td class="keep">Đã có</td></tr>
+    <tr><td>Zapier</td><td>Recurring analysis</td><td>n8n</td><td class="keep">Giữ</td></tr>
+    <tr><td>Snowflake</td><td>Data warehouse</td><td>PostgreSQL / DuckDB</td><td class="light">Khi data lớn</td></tr>
+    <tr><td>Carta</td><td>Cap table (niche)</td><td>Không có OSS sạch</td><td class="del">Không liên quan</td></tr>
+  </table>
+</div>
+
+<!-- ===== CASE 8 ===== -->
+<div class="case">
+  <div class="top"><div><span class="num">8</span><b>The Armada</b> — Membership cao cấp cho lãnh đạo</div>
+    <div><span class="tag">Marketing</span><span class="tag">Sales</span><span class="tag">Ops/HR/Finance</span></div></div>
+  <p class="muted">Private membership — 18 tháng dùng Align-Automate-Achieve. Điểm lạ: nhấn mạnh <b>mindset/culture</b> là đòn bẩy.</p>
+  <div class="stats">
+    <div class="stat"><div class="n">103%</div><div class="l">đạt revenue goal (3 tháng)</div></div>
+    <div class="stat"><div class="n">78%</div><div class="l">tỷ lệ gia hạn member</div></div>
+    <div class="stat"><div class="n">47%</div><div class="l">cải thiện mindset</div></div>
+    <div class="stat"><div class="n">1 ngày</div><div class="l">NS thêm/tuần</div></div>
+  </div>
+  <div class="mech"><b>Cơ chế 78% renewal:</b> member success tự động hoá (Monday + PeopleVine) + KPI dashboard tự pull → team tự quản. <b>Bài học: phần "mindset/coaching" map vào tông Agent3 coaching.</b></div>
+  <table>
+    <tr><th>Tool gốc</th><th>Chức năng</th><th>OSS / Hermes</th><th>Quyết định</th></tr>
+    <tr><td>Monday CRM + Monday.com</td><td>CRM + marketing automation</td><td>Twenty/EspoCRM + n8n</td><td class="keep">Đã có</td></tr>
+    <tr><td>ManyChat</td><td>Chatbot marketing</td><td>Typebot / Hermes+Telegram</td><td class="del">Hermes thay</td></tr>
+    <tr><td>Twilio</td><td>SMS</td><td>Telegram Bot</td><td class="del">Xóa</td></tr>
+    <tr><td>Slack</td><td>Team chat</td><td>Telegram</td><td class="del">Xóa</td></tr>
+    <tr><td>QuickBooks + Zapier</td><td>Tài chính + bridge</td><td>Akaunting + n8n</td><td class="light">Optional</td></tr>
+    <tr><td>PeopleVine</td><td>Membership platform (niche)</td><td>Không có OSS sạch</td><td class="del">Không liên quan</td></tr>
+  </table>
+</div>
+
+<!-- ===== CASE 9 ===== -->
+<div class="case">
+  <div class="top"><div><span class="num">9</span><b>F&B Insights</b> — Nền tảng data nhà hàng (B2B SaaS)</div>
+    <div><span class="tag">Sales</span><span class="tag">Customer Success</span><span class="tag">Finance</span></div></div>
+  <p class="muted">Platform chuẩn hoá data POS nhà hàng. Case có lớp <b>Customer Success</b> rõ — chống "customer slipping away".</p>
+  <div class="stats">
+    <div class="stat"><div class="n">100%</div><div class="l">tăng sales productivity</div></div>
+    <div class="stat"><div class="n">70%</div><div class="l">giảm onboarding KH</div></div>
+    <div class="stat"><div class="n">17%</div><div class="l">tăng LTV</div></div>
+    <div class="stat"><div class="n">$72K</div><div class="l">giá trị NS/năm</div></div>
+  </div>
+  <div class="mech"><b>Cơ chế chống churn:</b> "Purgatory Dashboard" flag KH đứng yên + gợi ý action; Breeze AI-SDR research account + lead scoring. → MCM: Agent5 flag affiliate 0 hoạt động 3+ ngày (đã có).</div>
+  <table>
+    <tr><th>Tool gốc</th><th>Chức năng</th><th>OSS / Hermes</th><th>Quyết định</th></tr>
+    <tr><td>HubSpot</td><td>Sales CRM + AI SDR + scoring</td><td>Twenty + Claude</td><td class="keep">Đã có</td></tr>
+    <tr><td>Monday.com</td><td>Onboarding boards + invoice board</td><td>EspoCRM/Twenty</td><td class="keep">Đã có</td></tr>
+    <tr><td>Mailchimp</td><td>Email</td><td>Listmonk / Mautic</td><td class="del">Telegram thay</td></tr>
+    <tr><td>Zapier</td><td>Bridge</td><td>n8n</td><td class="keep">Giữ</td></tr>
+    <tr><td>QuickBooks</td><td>28 automation hoá đơn</td><td>Akaunting / Invoice Ninja</td><td class="light">Optional</td></tr>
+  </table>
+</div>
+
+<!-- ===== CASE 10 ===== -->
+<div class="case">
+  <div class="top"><div><span class="num">10</span><b>Geoship</b> — Sản xuất nhà bioceramic + crowdfunding</div>
+    <div><span class="tag">Marketing</span><span class="tag">Sales</span><span class="tag">Investment</span></div></div>
+  <p class="muted">Nhà geodesic bền vững — gọi vốn cộng đồng + investor. Điểm hay: <b>AI chatbot "Domi"</b> train trên toàn bộ knowledge base.</p>
+  <div class="stats">
+    <div class="stat"><div class="n">$2.4M</div><div class="l">gọi vốn crowdfunding</div></div>
+    <div class="stat"><div class="n">$350M</div><div class="l">order deposits</div></div>
+    <div class="stat"><div class="n">40%</div><div class="l">tăng hiệu suất sales</div></div>
+    <div class="stat"><div class="n">2 ngày</div><div class="l">NS thêm/member/tuần</div></div>
+  </div>
+  <div class="mech"><b>Cơ chế:</b> chatbot Domi (train knowledge base, đúng tông brand) tự trả lời + capture email + book deposit + nhập CRM segmented. → MCM: Hermes Agent + Claude train trên knowledge/ (book-SOP, ICP) = đúng mô hình này, bạn đã có sẵn.</div>
+  <table>
+    <tr><th>Tool gốc</th><th>Chức năng</th><th>OSS / Hermes</th><th>Quyết định</th></tr>
+    <tr><td>HubSpot</td><td>CRM + pipeline (sales/crowdfund/investor)</td><td>Twenty/EspoCRM</td><td class="keep">Đã có</td></tr>
+    <tr><td>Notion</td><td>Knowledge base deal</td><td>AppFlowy 72.8K</td><td class="light">Optional (đã có knowledge/)</td></tr>
+    <tr><td>Zapier</td><td>Chatbot→ticket automation</td><td>n8n</td><td class="keep">Giữ</td></tr>
+    <tr><td>Ramp</td><td>Thẻ chi tiêu (niche)</td><td>Không có OSS sạch</td><td class="del">Không liên quan</td></tr>
+    <tr><td>(Chatbot Domi)</td><td>AI trả lời + capture + book</td><td>Hermes + Claude trên knowledge/</td><td class="keep">Đã có nền</td></tr>
+  </table>
+</div>
+
+<!-- ===== MUSK PAGE ===== -->
+<header class="hero" style="margin-top:40px">
+  <div class="kicker">First-Principles Lens · Thuật toán 5 bước của Elon Musk</div>
+  <h1>Điểm mạnh thật của hệ thống ZeremAI — soi qua tư duy gốc Musk
+    <small>Áp "thuật toán" 5 bước (bản trong tiểu sử Isaacson) + first-principles để tìm vì sao thiết kế này mạnh, và MCM mạnh/hổng ở đâu</small></h1>
+</header>
+
+<div class="case">
+  <div class="top"><h3><span class="num">1</span>"Make requirements less dumb" — Chất vấn yêu cầu</h3></div>
+  <p>Điểm mạnh lớn nhất: <b>họ không bán cái khách nghĩ họ cần — họ định nghĩa lại bài toán xuống tầng vật lý.</b> Landhold "cần marketing tốt hơn" → dịch thành "decision-maker phải dồn giờ vào deal tốt nhất". Algo First "cần scale sales" → câu của CEO: <i>"decoupled scale from headcount"</i>. Mọi case quy về cùng ràng buộc gốc: <b>thông lượng xử lý của con người là nút thắt, không phải thiếu kỹ năng.</b></p>
+  <div class="mech">Bằng chứng: agenda họp mở bằng <i>"How are you feeling, 1-10?"</i> — chất vấn cả trạng thái con người trước khi chất vấn số liệu.</div>
+</div>
+
+<div class="case">
+  <div class="top"><h3><span class="num">2</span>"Delete" — Xóa trước khi tối ưu</h3></div>
+  <p>Value prop của họ <b>chính là sự xóa bỏ</b>, không phải thêm tính năng: Paxwell due diligence 5h → <b>45 giây</b>; Landhold "46 automations replace manual work" (đếm việc người bị xóa, không đếm feature); Fireflies/28 automation xóa ghi chú + nhập hoá đơn tay. Musk: "không thỉnh thoảng thêm lại 10% thì xóa chưa đủ" — họ xóa đến mức <b>xóa luôn headcount</b> khỏi phương trình tăng trưởng.</p>
+</div>
+
+<div class="case">
+  <div class="top"><h3><span class="num">3</span>"Simplify" — Đơn giản hoá</h3></div>
+  <p>Mọi case tấn công đúng một kẻ thù: <b>fragmentation</b>. Data rải rác Sheet/CRM/chat → gom về MỘT board (single source of truth). Tinh tế: EO Accelerator có Excel + Docs + HubSpot chồng nhau → họ <b>không tối ưu Excel, họ hợp nhất rồi bỏ phần trùng</b> — đúng Musk bước 3: đừng đánh bóng bộ phận lẽ ra không nên tồn tại.</p>
+</div>
+
+<div class="case">
+  <div class="top"><h3><span class="num">4</span>"Accelerate cycle time" — Rút ngắn chu kỳ</h3></div>
+  <p>Nơi họ mạnh và đo giỏi nhất: Algo First <b>−60% sales cycle</b>, F&B <b>−30%</b>, Paxwell chatbot <b>24/7</b> speed-to-lead. Cơ chế tinh vi: <b>"Last Status Change" tracking + email-open notify</b> — biến "thời gian lead nằm trong 1 stage" thành đại lượng vật lý đo được rồi tấn công nó. Landhold +300% response = bắn đúng thời điểm, không phải AI viết hay.</p>
+  <div class="mech">First-principles: coi <b>quan hệ là tín hiệu phân rã theo thời gian</b> ("Connection Strength + Last Interaction"). Mọi follow-up là cuộc chiến chống decay.</div>
+</div>
+
+<div class="case">
+  <div class="top"><h3><span class="num">5</span>"Automate" — Tự động hoá (bước CUỐI)</h3></div>
+  <p>Kỷ luật đáng học: <b>họ automate sau cùng.</b> Bảng giá có hẳn mục <i>"Department Systems Maps"</i> + <i>"Discovery & Strategy Plans"</i> → vẽ bản đồ hệ thống trước, automate sau. Musk cảnh báo lỗi kinh điển là automate một quy trình hỏng; ZeremAI tránh đúng lỗi đó: map → xóa → đơn giản → mới gắn AI/automation.</p>
+</div>
+
+<h2>2 điểm mạnh first-principles sâu hơn (ngoài thuật toán)</h2>
+<table>
+  <tr><th>Điểm mạnh</th><th>Bằng chứng</th><th>Vì sao mạnh (first-principles)</th></tr>
+  <tr><td><b>A. Đo cơ chế, không đo phù phiếm</b></td><td>Studio B công bố "48.4% drop từ Prospective→Proposal"; F&B có "Purgatory Dashboard" flag khách đứng yên</td><td>Chỉ ra chỗ rò của phễu (đơn vị nguyên tử của quy trình), không khoe doanh thu tổng</td></tr>
+  <tr><td><b>B. Ràng buộc thật là CON NGƯỜI, không phải công nghệ</b></td><td>The Armada: 63% triển khai thất bại, mindset là lý do #1 → front-load coaching (47% cải thiện mindset)</td><td>Giải binding constraint thật: công cụ xịn nhưng người không dùng = 0. Không giải cái dễ.</td></tr>
+</table>
+
+<h2>Soi MCM của bạn qua cùng lăng kính</h2>
+<table>
+  <tr><th>Lăng kính Musk</th><th>MCM đang ở đâu</th><th>Hành động</th></tr>
+  <tr><td>Bước 4 — cycle time</td><td class="keep">MẠNH — Agent3 coaching trigger khi inactive/drop = đúng "last status change"</td><td>Giữ</td></tr>
+  <tr><td>Bước 5 — automate cuối</td><td class="keep">MẠNH — đã map systems (CLAUDE.md) trước khi automate</td><td>Giữ</td></tr>
+  <tr><td>Bước 2 — delete</td><td class="del">VI PHẠM — đang chồng 4 CRM (EspoCRM + SaleSmartly + Twenty + Chatwoot)</td><td>Xóa còn 1</td></tr>
+  <tr><td>Điểm mạnh A — đo cơ chế</td><td class="del">HỔNG — chưa log reply-rate / chưa có Social Performance Tracker</td><td>Build tracker + last30days</td></tr>
+  <tr><td>Bước 1 — requirement dumb nhất</td><td class="del">CHẶN — đòn bẩy +300%/follow-up đang TẮT vì LLM hết quota (chạy fallback cứng)</td><td><b>Sửa TRƯỚC mọi thứ: nạp lại LLM</b></td></tr>
+</table>
+<p class="note">Lưu ý trung thực: các con số (+300%, 7.2x, £1.61M) là số marketing trên trang Zerem, chưa kiểm chứng độc lập. Phân tích ở đây là về <b>cơ chế thiết kế</b>, không xác nhận kết quả.</p>
+
+<!-- ===== INSIGHTS ===== -->
+<h2>3 kết luận chiến lược cho Hermes/MCM</h2>
+<p><b>1. Cùng 1 công thức, 10 ngành.</b> ZeremAI lặp lại y hệt: CRM board + automation + AI personalize + dashboard + nhịp họp KPI. Đòn bẩy kết quả luôn là <b>follow-up đúng lúc</b> (status trigger) + <b>scoring để ưu tiên</b> + <b>dashboard để không mù</b> — không phải tool đắt. MCM của bạn đã có cả 3 (Agent1 scoring, Agent3 coaching trigger, Agent5 report).</p>
+<p><b>2. Hai case đáng copy nhất cho bạn:</b> <b>Studio B</b> (content→lead, có Social Performance Tracker — đúng gap MCM đang thiếu) và <b>EO Accelerator</b> (template lifecycle adapt nhiều "chapter" — đúng mô hình đóng gói SOP Bundle bán lại). <b>Algo First</b> là blueprint cho động cơ bán Bundle (enrich→CRM→outreach→Docuseal).</p>
+<p><b>3. Mảnh ghép OSS mới cần bổ sung khi mở rộng:</b> Docuseal (ký hợp đồng khi bán Bundle), Metabase (dashboard khi data sang Postgres), Meetily/Whisper (transcribe signal), Listmonk (nếu cần email ngoài Telegram). Còn lại bạn đã có gần đủ.</p>
+
+<footer>
+  <b>Nguồn case study:</b> <a href="https://zerem.ai/case-studies/">zerem.ai/case-studies</a> (10 case, fetch 24/06/2026).
+  <b>Repo verify:</b> Twenty, Plane, n8n, Activepieces, Metabase, Superset, Docuseal, Documenso, Mautic, Listmonk, Akaunting, Invoice Ninja, AppFlowy, Medusa, Meetily, Hermes Agent, last30days-skill, Chatwoot, Mattermost/Rocket.Chat.<br>
+  Stars/license tham khảo thời điểm 06/2026 — kiểm lại trước khi công bố trong Bundle. · MCM Vendor SOP Bundle · case-study-to-stack
+</footer>
+
+</div>
+</body>
+</html>
